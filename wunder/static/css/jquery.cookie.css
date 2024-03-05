@@ -1,0 +1,10 @@
+#cookie-bar {padding: 10px 20px; text-align: center; width: 950px; margin: 0px auto; line-height: 150%;}
+#cookie-bar.fixed {position:fixed; top:0; left:0; width:100%;}
+#cookie-bar p {margin:0; padding:0;}
+#cookie-bar a {color:#ffffff; display:inline-block; border-radius:3px; text-decoration:none; padding:0 6px; margin-left:8px;}
+#cookie-bar .cb-enable {background: url("/static/img/close.jpg") no-repeat; float: right; right: 7px; top: 7px; padding: 0px 0px 10px 10px; width: 15px; height: 15px; color: #555;}
+#cookie-bar .cb-disable {background:#990000;}
+#cookie-bar .cb-disable:hover {background:#bb0000;}
+#cookie-bar .cb-learnmore{color:blue; padding: 0px 0px;}
+#cookie-bar .cb-policy {background:#0033bb;}
+#cookie-bar .cb-policy:hover {background:#0055dd;}
