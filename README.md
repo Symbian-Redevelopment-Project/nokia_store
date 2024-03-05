@@ -1,4 +1,4 @@
-## Nokia Ovi store update
+## Nokia Ovi store Redevelopment
 The main goal of this Organization/Repository is to revive the functionality of the Nokia Store!
 This will allow the Nokia Store to function as intended and also be used to download applications.
 This will be a web client that embeds the website itself into the application to ensure a smooth, bug-free experience.
