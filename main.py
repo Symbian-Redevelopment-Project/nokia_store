@@ -1,8 +1,10 @@
 import os
 from flask import Flask, render_template, redirect, request
-from lib.database import WrongCategoryError, get_apps, get_apps_categories
+from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name
 
 app = Flask(__name__)
+
+print(get_apps()[1])
 
 @app.route("/")
 @app.route("/home")
@@ -31,11 +33,12 @@ def _m_applications_browse():
     categories = get_apps_categories()
     return render_template("m_applications_browse.html", categories=categories)
 
-@app.route("/m/applications")
-def __m_applications():
-    categoryId = request.args.get('categoryId')
-    return redirect("/m/")
+# @app.route("/m/applications")
+# def __m_applications():
+#     categoryId = request.args.get('categoryId')
+#     return redirect(f"/m/applications/?categoryId={categoryId}")
 
+@app.route("/m/applications")
 @app.route("/m/applications/")
 def _m_applications(categoryId=None):
     if not categoryId:
@@ -50,18 +53,21 @@ def _m_applications(categoryId=None):
     if not pageId:
         pageId = 1
     
-    if (pageId * 10) > len(all_apps) - 9:
-        return redirect("/m/applications/?pageId=1")
+    if ((pageId * 10) - 9) > len(all_apps):
+        print("XD")
+        return redirect(f"/m/applications/?pageId=1&categoryId={categoryId}")
     
     first_index = pageId - 1
     last_index = first_index + 10
 
-    apps = all_apps()
-
-    apps_to_show = all_apps[first_index:last_index]
+    ids = list(all_apps.keys())
+    apps_to_show = ids[first_index:last_index]
+    apps_to_show = [all_apps[id] for id in apps_to_show]
 
     if not categoryId:
         return render_template('m_applications.html', apps=apps_to_show)
+    else:
+        return render_template('m_applications.html', apps=apps_to_show, category=get_category_name(categoryId))
 
 @app.route("/m")
 @app.route("/m/home")
