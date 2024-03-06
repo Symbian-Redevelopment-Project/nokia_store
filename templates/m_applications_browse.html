@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"  >
+    <head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
+        <meta name="navigation" content="cursor" />
+        <title>Nokia Store</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                
+        <link type="text/css" rel="stylesheet" media="all" charset="utf-8" href="/static/css/global-min.css" />
+        <link rel="shortcut icon" href="/static/img/favicon1.ico" type="image/x-icon"/>
+    </head>
+
+    <body>
+        
+        <div id="wrapper">
+            <div id="header">
+                <div id="top">
+                    <table>
+                        <tr>
+                            <td id="logo">
+                                    <a id='logoImg' href="/m/"><img src="/static/img/logo_ovi.png" alt="Nokia" /></a>
+                            </td>
+                            <td id="searchLink"></td>
+                        </tr>
+                    </table>
+                </div> <!-- end top -->
+            </div> <!-- end header -->
+
+            <div id="views">
+                <div class="view">
+                    <div class="contentItem">
+	
+	                    <h2>Categories</h2>
+
+                        <div id="categories">
+                            <a href="/m/applications" class="selected">All Applications</a><br />
+                            {% for category in categories %}
+                            <a href="/m/applications/?categoryId={{ category[0] }}">{{ category[1] }}</a>{% if loop.index != categories|length %}<br />{% endif %}
+                            {% endfor %}
+                        </div> <!-- end categories -->
+
+	                </div> <!-- end content item -->
+
+                <!-- SiteCatalyst code -->
+                <div class="beacon"></div>
+                <!-- End SiteCatalyst code -->
+                </div>
+            </div> <!-- end views -->
+
+            <div id="bottom"></div>
+                        
+            <div id="footer">
+                <a class="accountStatusChange" href="https://store.ovi.mobi/login">Sign in</a>  |
+                <a href="http://store.ovi.mobi/legal/terms/store">Terms</a> |
+                <a href="http://store.ovi.mobi/legal/privacy">Privacy</a> |
+                <a href="http://store.ovi.mobi/help/faqs">Help</a><br/>
+            © Symbian Redevelopment Project 2024</div>
+        </div> <!-- end wrapper -->
+    </body>
+</html>

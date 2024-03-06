@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"  >
+    <head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
+        <meta name="navigation" content="cursor" />
+        <title>Nokia Store: Our picks</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                
+        <link type="text/css" rel="stylesheet" media="all" charset="utf-8" href="/static/css/global-min.css" />
+
+        <link rel="shortcut icon" href="/static/img/favicon1.ico" type="image/x-icon"/>
+    </head>
+
+    <body>
+
+        <div id="wrapper">
+            <div id="header">
+                <div id="top">
+                    <table>
+                        <tr>
+                            <td id="logo">
+                                <a id='logoImg' href="/"><img src="/static/img/logo_ovi.png" alt="Nokia" /></a>
+                            </td>
+                            <td id="searchLink">
+                                <a href="#searchContent">Search</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div> <!-- end top -->
+
+                <div id="navigation">
+                    <a class="first selected" href="/">Our picks</a> <b>|</b>
+                    <a href="/m/applications/">Apps</a> <b>|</b>
+                    <a href="/m/games/">Games</a> <b>|</b>
+                    <a href="/m/audiovideo/">Audio &amp; video</a> <b>|</b>
+                    <a href="/m/personalize/">Personalisation</a>
+                </div> <!-- end navigation -->
+            
+            </div> <!-- end header -->
+
+            <div id="views">
+                <div class="view">
+                    
+
+                <!-- Content Stream -->
+                    <!-- BSO -->
+                    <!-- <div class="contentList bso">
+                        <table>
+                            <tr class="contentItem">
+                                <td class="thumbnail">
+                                    <img src="http://p.d.ovi.com/p/g/store/15725945/AFM_icon_256-46x46.png?q=qYfC8uw7D*iQ8K8Y5j219Gd9J4pa9-s1&c=ovi_store" alt="ASTRO File Manager"/>
+                                </td>
+                                <td class="contentType">
+                                    <h2 class="title"><a href="http://store.ovi.mobi/content/447014?contentArea=&amp;clickSource=bso">ASTRO File Manager</a></h2>Utilities
+                                    <p class="description"></p>
+                                </td>    
+                            </tr>
+                        </table>
+                    </div> -->
+                    <!-- end bso -->
+
+                    <table class="contentList" cellspacing="0" width='100%' >
+
+                        {% for app in apps %}
+
+                        {% if loop.index % 2 == 0 %}
+                        <tr class="contentItem ">
+                        {% else %}
+                        <tr class="contentItem  alt">
+                        {% endif %}
+        
+                            <td class="thumbnail">
+                                <img src="/static/store/{{ app['img'] }}" width="46" height="46" alt="thumbnail of {{ app['title'] }}"/>
+                            </td>
+        
+                            <td class="contentType">
+                                <h2 class="title">
+                                    <a href="/m/app/{{ app['id'] }}">{{ app['title'] }}</a>
+                                </h2>{{ app['category'] }}
+                            </td>
+        
+                            <td class="contentRatingPrice">
+                                <div class="rating">
+                                    <img src="/static/img/star_p.png" alt="1 star" />
+                                    <img src="/static/img/star_p.png" alt="2 stars" />
+                                    <img src="/static/img/star_p.png" alt="3 stars" />
+                                    <img src="/static/img/star_p.png" alt="4 stars" />
+                                    <img src="/static/img/star_g.png" alt="5 stars" />
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </table>
+
+                </div><!-- end Content Stream -->
+
+                <p class="pagination"><a class="next" href="/home/?format=mobi&amp;page=2">Next</a></p>
+            <!-- end results -->
+
+
+            <!-- SiteCatalyst code -->
+            <div class="beacon"></div>
+            <!-- End SiteCatalyst code -->
+            </div>
+        </div> <!-- end views -->
+
+        <div id="bottom">
+            <div id="searchContent">
+                <form action="/search" method="get" id="searchForm">
+                    <fieldset id='searchField'>
+                        <label for="search">Search</label>
+                        <input type="text" id="search" name="q" title="" value="" /> <input type="submit" id="searchBtn" value="Search" />
+                    </fieldset>
+                </form>
+            </div> <!-- end search -->
+
+            <div id="bottomNavigation">
+                <h3>Browse categories</h3>
+                <a href="/" class="selected">Our picks</a><br />
+                <a href="/m/applications/">Apps</a><br />
+                <a href="/m/games/">Games</a><br />
+                <a href="/m/audiovideo/">Audio &amp; video</a><br />
+                <a href="/m/personalize/">Personalisation</a><br />
+
+                <div class="settings">
+		            <a href="http://www.nokia.com/support/">Help</a>
+                </div>
+            </div> <!-- end navigation -->
+        </div>
+        
+
+        <div id="footer">
+            <a class="accountStatusChange" href="https://store.ovi.mobi/login">Sign in</a>  |
+            <a href="http://www.nokia.com/mmo-serviceterms">Terms</a> |
+            <a href="http://www.nokia.com/mmo-privacypolicy">Privacy</a> |
+            <a href="http://store.ovi.mobi/help/faqs">Help</a><br/>
+            © Symbian Redevelopment Project 2024</div>
+        </div> <!-- end wrapper -->
+    </body>
+</html>

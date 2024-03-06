@@ -11,7 +11,7 @@
 
         <link rel="canonical" href="{{ url_for(request.endpoint, **request.view_args) }}" />                
         
-        <meta property="og:image" content="http://p.d.ovi.com/p/g/store/16279056/VirtuaGym1-192x192.png?q=nYwvyzrc-tNPhZJvN0bI8QfJzzntrutJ&c=ovi_store" />
+        <!-- <meta property="og:image" content="http://p.d.ovi.com/p/g/store/16279056/VirtuaGym1-192x192.png?q=nYwvyzrc-tNPhZJvN0bI8QfJzzntrutJ&c=ovi_store" /> -->
         
         <script type="text/javascript" src="/static/js/script.js"></script>
 
@@ -77,29 +77,21 @@
                 <img itemprop="image" src="/static/screenshots/{{ app['screenshots'][0] }}" width="192" height="340" alt="{{ app['title'] }}" />
             </dd>
 
+            
+            {% for screenshot in app['screenshots'] %}
+            
             <dt class="thumb">
-            <script>console.log(`/static/screenshots/{{ app['screenshots'][0] }}`)</script>
-            <a href="/static/screenshots/{{ app['screenshots'][0] }}" id="screenshot1" onclick="return false;">
-                <img src="/static/screenshots/{{ app['screenshots'][0] }}" width="29" height="52" alt="{{ app['title'] }}" />
+            <a href="/static/screenshots/{{ app['screenshots'][loop.index-1] }}" id="screenshot{{loop.index}}" onclick="return false;">
+                <img src="/static/screenshots/{{ app['screenshots'][loop.index-1] }}" width="29" height="52" alt="{{ app['title'] }}" />
             </a>
             </dt>
 
-            <dt class="thumb">
-                <a href="/static/screenshots/{{ app['screenshots'][1] }}" id="screenshot2" onclick="return false;">
-                    <img src="/static/screenshots/{{ app['screenshots'][1] }}" width="29" height="52" alt="{{ app['title'] }}" />
-                </a>
-            </dt>
-                                    
-            <dt class="thumb">
-                <a href="/static/screenshots/{{ app['screenshots'][2] }}" id="screenshot3" onclick="return false;">
-                    <img src="/static/screenshots/{{ app['screenshots'][2] }}" width="29" height="52" alt="{{ app['title'] }}"/>
-                </a>
-            </dt>
+            {% endfor %}
         
         </dl>
 
         <script>
-            screenshotHandlers()
+            screenshotHandlers({{ app['screenshots']|length }})
         </script> <!-- Define handlers for hovering -->
 
         <!-- RATING -->
@@ -171,14 +163,13 @@
 
         <ul class="tabHeader related">
                     
-		    <li class="currentTab" title="Related" onclick="">
-                <a rel="ajax-comment" href="http://store.ovi.com/content/443852">Related</a>
+		    <li class="currentTab" title="Related" onclick="return false;">
+                <a rel="ajax-comment" href="{{ request.url }}">Related</a>
             </li>
 		    
-            <li title="Reviews" onclick="">
-		        <a rel="ajax-comment" href="http://store.ovi.com/content/443852/reviews">Reviews</a>
+            <li title="Reviews" onclick="return false;">
+		        <a rel="ajax-comment" href="#">Reviews</a>
             </li>
-		                   
 		                		
 		</ul>
 
@@ -204,20 +195,17 @@
                             <p class="beforeRating">by: <a href="http://store.ovi.com/publisher/AceMobile/?clickSource=related%2Bcontent&contentArea=applications" class="publisher">AceMobile</a></p>
                             <div class="entityRating protected">
                                 <div class="stars">
-                                    <img src="http://static.store.ovi.com/mobi/img/star_p.png" alt="1 star" />
-                                    <img src="http://static.store.ovi.com/mobi/img/star_p.png" alt="2 stars" />
-                                    <img src="http://static.store.ovi.com/mobi/img/star_p.png" alt="3 stars" />
-                                    <img src="http://static.store.ovi.com/mobi/img/star_p.png" alt="4 stars" />
-                                    <img src="http://static.store.ovi.com/mobi/img/star_g.png" alt="5 stars" />
+                                    <img src="/static/img/star_p.png" alt="1 star" />
+                                    <img src="/static/img/star_p.png" alt="2 stars" />
+                                    <img src="/static/img/star_p.png" alt="3 stars" />
+                                    <img src="/static/img/star_p.png" alt="4 stars" />
+                                    <img src="/static/img/star_g.png" alt="5 stars" />
                                 </div>
                             </div>
                             <h5>Description</h5>
                             <div class="summary descFull_0">
                                 Description    
                             </div>
-                            <ul class="entityActions actionsSm">
-                                <li class="price">Free</li>
-                            </ul>
                         </li>
                     </ol>
                 </div>
