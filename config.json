@@ -1,0 +1,6 @@
+{
+    "DB_HOST":"localhost",
+    "DB_NAME": "ovistore",
+    "DB_USER": "wunder",
+    "DB_PASS": "Jojek1324"
+}
