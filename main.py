@@ -5,8 +5,6 @@ import random
 
 app = Flask(__name__)
 
-print(get_apps()[1])
-
 @app.route("/")
 @app.route("/home")
 def __root():
