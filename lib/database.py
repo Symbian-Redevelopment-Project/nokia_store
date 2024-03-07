@@ -1,7 +1,8 @@
 import psycopg2
 import json
+import os
 
-config = json.loads(open("./config.json", "r").read())
+config = json.loads(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.json"), "r").read())
 
 conn = psycopg2.connect(database=config["DB_NAME"],
     host=config["DB_HOST"],
