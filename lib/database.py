@@ -1,11 +1,13 @@
 import psycopg2
+import json
+import os
 
-password = "Jojek1324"
+config = json.loads(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.json"), "r").read())
 
-conn = psycopg2.connect(database="ovistore",
-    host="localhost",
-    user="wunder",
-    password=password
+conn = psycopg2.connect(database=config["DB_NAME"],
+    host=config["DB_HOST"],
+    user=config["DB_USER"],
+    password=config["DB_PASS"]
 )
 
 class WrongCategoryError(Exception):
