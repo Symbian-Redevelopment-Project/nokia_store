@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, request
-from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name
+from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name, get_category_id
+import random
 
 app = Flask(__name__)
 
@@ -15,14 +16,54 @@ def __root():
 def __app():
     return redirect("/home/")
 
-@app.route("/app/<id>")
+@app.route("/app/<int:id>")
 def _app(id):
 
-    app = {
-        'size': round(os.stat(f'static/files/Opera Mini v7.10(32453).sisx').st_size / (1024 * 1024), 2)
-    }
+    app = get_apps()[id]
+    app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
+    app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
 
-    return render_template("app_page.html", app=app)
+    main_category = "Applications"
+    main_category_link = "/applications/"
+
+    recommended = list(get_apps(categoryId=app['category_id']).values())
+    recommended = random.choices(recommended, k=10)
+    recommended = [dict(t) for t in {tuple(d.items()) for d in recommended}]
+    recommended = [d for d in recommended if d['id'] != app['id']]
+    if not recommended:
+        recommended = None
+
+    return render_template("app_page.html", app=app, main_category=main_category, main_category_link=main_category_link, recommended=recommended)
+
+@app.route("/m/app/<int:id>/")
+def _m_app(id):
+
+    app = get_apps()[id]
+    app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
+    app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
+
+    main_category = "Applications"
+    main_category_link = "/m/applications/"
+
+    recommended = list(get_apps(categoryId=app['category_id']).values())
+    recommended = random.choices(recommended, k=10)
+    recommended = [dict(t) for t in {tuple(d.items()) for d in recommended}]
+    recommended = [d for d in recommended if d['id'] != app['id']]
+    if not recommended:
+        recommended = None
+
+    return render_template("m_app_page.html", app=app, main_category=main_category, main_category_link=main_category_link, recommended=recommended)
+
+@app.route("/m/app/<int:id>/images/")
+def _m_app_images(id):
+    app = get_apps()[id]
+
+    if not app['screenshots_count'] > 0:
+        return redirect("/m/app/id/")
+
+    app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
+    return render_template("m_app_images.html", app=app)
+
 
 @app.route("/m/applications/browse")
 def __m_applications_browse():
@@ -38,7 +79,6 @@ def _m_applications_browse():
 #     categoryId = request.args.get('categoryId')
 #     return redirect(f"/m/applications/?categoryId={categoryId}")
 
-@app.route("/m/applications")
 @app.route("/m/applications/")
 def _m_applications(categoryId=None):
     if not categoryId:
@@ -54,7 +94,6 @@ def _m_applications(categoryId=None):
         pageId = 1
     
     if ((pageId * 10) - 9) > len(all_apps):
-        print("XD")
         return redirect(f"/m/applications/?pageId=1&categoryId={categoryId}")
     
     first_index = pageId - 1
@@ -86,7 +125,7 @@ def _m_root():
         {"title": "app5", "publisher": "publisher1", "category": "apps", "img": "tenis_256x256_splash_en_TRIAL-96x96.jpg"},
     ]
     
-    return render_template("index_m.html", apps=apps)
+    return render_template("m_index.html", apps=apps)
 
 @app.route("/home/")
 def _root():

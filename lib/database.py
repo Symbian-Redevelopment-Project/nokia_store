@@ -1,6 +1,6 @@
 import psycopg2
-import json
 import os
+import json
 
 config = json.loads(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.json"), "r").read())
 
@@ -27,7 +27,6 @@ def get_apps(categoryId=None):
     else:
         if int(categoryId) not in categories_ids:
             raise WrongCategoryError
-        print(categoryId)
         cursor.execute("SELECT * FROM apps WHERE category=%s", (int(categoryId),))
     
     results_list = cursor.fetchall()
@@ -38,19 +37,15 @@ def get_apps(categoryId=None):
             "id": result_list[0],
             "title": result_list[1],
             "file": result_list[2],
-            "category": None,
-            "description": result_list[4],
+            "category_name": get_category_name(result_list[3]),
+            "category_id": result_list[3],
+            "description": result_list[4].replace("postgres$#", "\n").strip(),
             "publisher": result_list[5],
             "version": result_list[6],
             "platform": result_list[7],
             "screenshots_count": result_list[8],
             'img': result_list[9]
         }
-
-        for category in categories:
-            if category[0] == result_list[3]:
-                results[result_list[0]]["category"] = category[1]
-                break
 
     cursor.close()
     return results
@@ -69,4 +64,14 @@ def get_category_name(categoryId):
 
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM apps_categories WHERE id=%s", (int(categoryId),))
-    return cursor.fetchall()[0][0]
+    result = cursor.fetchall()[0][0]
+    cursor.close()
+    return result
+
+def get_category_id(categoryName):
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM apps_categories WHERE name=%s", (categoryName,))
+    result = cursor.fetchall()[0][0]
+    cursor.close()
+    return result

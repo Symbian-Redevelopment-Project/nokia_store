@@ -11,7 +11,7 @@
 
         <link rel="canonical" href="{{ url_for(request.endpoint, **request.view_args) }}" />                
         
-        <!-- <meta property="og:image" content="http://p.d.ovi.com/p/g/store/16279056/VirtuaGym1-192x192.png?q=nYwvyzrc-tNPhZJvN0bI8QfJzzntrutJ&c=ovi_store" /> -->
+        <meta property="og:image" content="{{ app['img'] }}" />
         
         <script type="text/javascript" src="/static/js/script.js"></script>
 
@@ -64,14 +64,15 @@
     <div class="contentCrumbs">
         <ul id="breadcrumb">
             <li class="home"><a href="/" class="gl">home<span><!--ir--></span></a></li>
-            <li class="category"><a href="/applications">Applications</a></li>
-            <li><a href="/applications?categoryId=23">{{ app['category'] }}</a></li>
+            <li class="category"><a href="{{ main_category_link }}">{{ main_category }}</a></li>
+            <li><a href="/applications?categoryId={{ app['category_id'] }}">{{ app['category_name'] }}</a></li>
             <li itemprop="name" class="lastChild"><a href="http://store.ovi.com/content/443852">{{ app["title"] }}</a></li>
         </ul>
     </div>
 
     <!-- PREVIEW -->
     <div class="contentItem">
+        {% if app['screenshots_count'] > 0 %}
         <dl id="previewItem">
             <dd class="preview">
                 <img itemprop="image" src="/static/screenshots/{{ app['screenshots'][0] }}" width="192" height="340" alt="{{ app['title'] }}" />
@@ -91,21 +92,33 @@
         </dl>
 
         <script>
-            screenshotHandlers({{ app['screenshots']|length }})
+            screenshotHandlers("{{ app['screenshots']|length }}")
         </script> <!-- Define handlers for hovering -->
+
+        {% endif %}
 
         <!-- RATING -->
                                         
         <!-- NOTE: use the class "me" on the ul to show the user's rating -->
+        {% if app['screenshots_count'] > 0 %}
         <div class="stars me ">
-            <img src="/static/img/star_p_big.png" alt="1 star" /><img src="/static/img/star_p_big.png" alt="2 stars" /><img src="/static/img/star_p_big.png" alt="3 stars" /><img src="/static/img/star_p_big.png" alt="4 stars" /><img src="/static/img/star_g_big.png" alt="5 stars" />
+            <img src="/static/img/star_p_big.png" alt="1 star" />
+            <img src="/static/img/star_p_big.png" alt="2 stars" />
+            <img src="/static/img/star_p_big.png" alt="3 stars" />
+            <img src="/static/img/star_p_big.png" alt="4 stars" />
+            <img src="/static/img/star_g_big.png" alt="5 stars" />
         </div>
+        {% endif %}
 
         </div>
 
 
     <!-- DETAILS -->
+    {% if app['screenshots_count'] > 0 %}
     <div class="contentDescription item" style="width:509px;">
+    {% else %}
+    <div class="contentDescription item" style="width:509px; padding-left: 26px;">
+    {% endif %}
         <!-- <h2 class="warning">Set your mobile to see if this item is compatible.
             <br />
             Use the <a href="#" class="deviceChange">Nokia mobile selector</a>.
@@ -114,13 +127,17 @@
 		<h1 class="title fn">{{ app["title"] }}</h1>
         <p class="createdBy">by: <span itemprop="author"><a itemprop="name" href="#" onclick="return false;">{{ app["publisher"] }}</a></span></p>  
         <p>{{ app["category"] }} - {{ app['size'] }} MB</p>
-
-
         
-        <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" class="hide-reviewdata">
-        <p itemprop="ratingCount" class="count">58 </p>
-        <p itemprop="ratingValue" class="rating">4</p>
-        </span>
+        {% if not app['screenshots_count'] > 0 %}
+        <div class="stars me ">
+            <img src="/static/img/star_p_big.png" alt="1 star" />
+            <img src="/static/img/star_p_big.png" alt="2 stars" />
+            <img src="/static/img/star_p_big.png" alt="3 stars" />
+            <img src="/static/img/star_p_big.png" alt="4 stars" />
+            <img src="/static/img/star_g_big.png" alt="5 stars" />
+        </div>
+        <p></p>
+        {% endif %}
 
 	    <p itemprop="description" class="descFull_0">{{ app["description"] }}</p>
         
@@ -149,13 +166,14 @@
         
             <li class="liButton">
         		<div class="loadButtonArea">
-				    <button id="sendViaSuiteBtn" style="border-radius: 8px;" title="Download" onclick="window.open(`http:\/\/{{ request.host }}/static/files/{{ app['file'] }}`, '_blank')">Download</button>
+				    <button id="sendViaSuiteBtn" style="border-radius: 8px;" title="Download" onclick="window.open(`http:\/\/{{ request.host }}/static/files/{{ app['file'] }}`)">Download</button>
 		        </div>
             </li>
 
         </ul>
   
     </div>
+
     </div>
     </div>
 
@@ -176,23 +194,26 @@
         <!-- related tab -->
         <div class="commentTab related on">
             <div class="tabContent">
-                <p class="pagination">
-                    <a rel=ajax-comment href="/content/443852?clickSource=related%2Bcontent&contentId=443852&action=index&amp;page=2">Next</a>
-                </p>
 
                 <div id="gridViewContainer">
+                    {% if recommended != None %}
                     <h3>Here are the most popular items that are similar to {{ app["title"] }}:</h3>
                     <br />
                     <ol class="entityList gridView" id="entityList">
+                        {% for app in recommended %}
+                        {% if loop.index % 2 == 0 %}
+                        <li class="entity nth-child-even ">
+                        {% else %}
                         <li class="entity nth-child-odd ">
-                            <a href="http://store.ovi.com/content/254424?clickSource=related%2Bcontent&contentArea=applications&pos=1" class="thumb">
-                                <img src="http://p.d.ovi.com/p/g/store/8571909/LockOnMessaging_256x256-96x96.JPG?q=ejaBj*xSTc0fd--0NU*spqg*kN6o6ZcK&amp;c=ovi_store" alt="LockOnMessaging" title="LockOnMessaging" />
+                        {% endif %}
+                            <a href="/app/{{ app['id'] }}" class="thumb">
+                                <img src="/static/store/{{ app['img'] }}" width="96" height="96" alt="{{ app['title'] }}" title="{{ app['title'] }}" />
                             </a>
                             <h4>
-                                <a href="http://store.ovi.com/content/254424?clickSource=related%2Bcontent&contentArea=applications&pos=1" title="LockOnMessaging" class="entityTitle">LockOnMessaging</a>
-                                <span class="entityType">Utilities</span>
+                                <a href="/app/{{ app['id'] }}" title="{{ app['title'] }}" class="entityTitle">{{ app['title'] }}</a>
+                                <span class="entityType">{{ app['category_name'] }}</span>
                             </h4>
-                            <p class="beforeRating">by: <a href="http://store.ovi.com/publisher/AceMobile/?clickSource=related%2Bcontent&contentArea=applications" class="publisher">AceMobile</a></p>
+                            <p class="beforeRating">by: <a href="#" class="publisher" onclick="return false;">{{ app['publisher'] }}</a></p>
                             <div class="entityRating protected">
                                 <div class="stars">
                                     <img src="/static/img/star_p.png" alt="1 star" />
@@ -204,15 +225,14 @@
                             </div>
                             <h5>Description</h5>
                             <div class="summary descFull_0">
-                                Description    
+                                {{ app['description'] }}   
                             </div>
                         </li>
+                        {% endfor %}
                     </ol>
+                    {% endif %}
                 </div>
-
-                <p class="pagination">
-                    <a rel=ajax-comment href="/content/443852?clickSource=related%2Bcontent&contentId=443852&action=index&amp;page=2">Next</a>
-                </p>
+                
             </div>
         </div>
 
