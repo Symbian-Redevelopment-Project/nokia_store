@@ -1,7 +1,8 @@
 import os
 from flask import Flask, render_template, redirect, request
-from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name, get_category_id
+from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name, search
 import random
+import math
 
 app = Flask(__name__)
 
@@ -77,6 +78,53 @@ def _m_applications_browse():
 #     categoryId = request.args.get('categoryId')
 #     return redirect(f"/m/applications/?categoryId={categoryId}")
 
+@app.route("/m/search")
+def _m_search():
+
+    query = request.args.get('q')
+    if not query:
+        return redirect("/m/home/")
+    
+    results = search(query)
+
+    pageId = request.args.get('pageId')
+
+    if not pageId:
+        pageId = 1
+    else:
+        pageId = int(pageId)
+    
+    if (pageId * 10) > math.ceil(len(results) / 10) * 10:
+        if pageId != 1:
+            return redirect(f"/m/search/?q={query}&pageId=1")
+        else:
+            return render_template("m_applications_empty.html", category=None)
+    else:
+        if ((pageId + 1) * 10) < math.ceil(len(results) / 10) * 10:
+            if pageId != 1:
+                next_page = pageId + 1
+            else:
+                next_page = None
+            if pageId != math.ceil(len(results) / 10):
+                previous_page = pageId - 1
+            else:
+                previous_page = None
+        else:
+            next_page = None
+            previous_page = None
+    
+    first_index = pageId - 1
+    last_index = first_index + 10
+
+    ids = list(results.keys())
+    apps_to_show = ids[first_index:last_index]
+    apps_to_show = [results[id] for id in apps_to_show]
+
+    if not results:
+        return ""
+    else:
+        return render_template("m_search.html", results=apps_to_show, search_query=query, next_page=next_page, previous_page=previous_page)
+    
 @app.route("/m/applications/")
 def _m_applications(categoryId=None):
     if not categoryId:
@@ -86,13 +134,21 @@ def _m_applications(categoryId=None):
     except WrongCategoryError:
         return redirect("/m/applications/")
 
-    pageId = request.args.get('page')
+    pageId = request.args.get('pageId')
 
     if not pageId:
         pageId = 1
+    else:
+        pageId = int(pageId)
     
     if ((pageId * 10) - 9) > len(all_apps):
-        return redirect(f"/m/applications/?pageId=1&categoryId={categoryId}")
+        if pageId != 1:
+            return redirect(f"/m/applications/?pageId=1&categoryId={categoryId}")
+        else:
+            if categoryId:
+                return render_template("m_applications_empty.html", category=get_category_name(categoryId))
+            else:
+                return render_template("m_applications_empty.html", category=None)
     
     first_index = pageId - 1
     last_index = first_index + 10
@@ -102,7 +158,7 @@ def _m_applications(categoryId=None):
     apps_to_show = [all_apps[id] for id in apps_to_show]
 
     if not categoryId:
-        return render_template('m_applications.html', apps=apps_to_show)
+        return render_template('m_applications.html', apps=apps_to_show, category=None)
     else:
         return render_template('m_applications.html', apps=apps_to_show, category=get_category_name(categoryId))
 
@@ -115,27 +171,65 @@ def __m_root():
 @app.route("/m/home/")
 def _m_root():
 
-    apps = [
-        {"title": "app1", "publisher": "publisher1", "category": "news", "img": "death_1-96x96.jpg"},
-        {"title": "app2", "publisher": "publisher2", "category": "virus", "img": "logo_256-96x96.jpg"},
-        {"title": "app3", "publisher": "publisher3", "category": "personalisation", "img": "GMR_Icon_256x256-96x96.png"},
-        {"title": "app4", "publisher": "publisher4", "category": "games", "img": "skiresort_256x256_splash_en-96x96.jpg"},
-        {"title": "app5", "publisher": "publisher1", "category": "apps", "img": "tenis_256x256_splash_en_TRIAL-96x96.jpg"},
-    ]
+    apps = get_apps()
+    pageId = request.args.get('pageId')
+
+    if not pageId:
+        pageId = 1
+    else:
+        pageId = int(pageId)
     
-    return render_template("m_index.html", apps=apps)
+    if (pageId * 10) > math.ceil(len(apps) / 10) * 10:
+        if pageId != 1:
+            return redirect(f"/m/search/?pageId=1")
+    else:
+        if ((pageId + 1) * 10) < math.ceil(len(apps) / 10) * 10:
+            if pageId != 1:
+                next_page = pageId + 1
+            else:
+                next_page = None
+            if pageId != math.ceil(len(apps) / 10):
+                previous_page = pageId - 1
+            else:
+                previous_page = None
+        else:
+            next_page = None
+            previous_page = None
+    
+    first_index = pageId - 1
+    last_index = first_index + 10
+
+    ids = list(apps.keys())
+    apps_to_show = ids[first_index:last_index]
+    apps_to_show = [apps[id] for id in apps_to_show]
+    
+    return render_template("m_index.html", apps=apps_to_show, next_page=next_page, previous_page=previous_page)
 
 @app.route("/home/")
 def _root():
-    apps = [
-        {"title": "app1", "publisher": "publisher1", "category": "news", "img": "death_1-96x96.jpg"},
-        {"title": "app2", "publisher": "publisher2", "category": "virus", "img": "logo_256-96x96.jpg"},
-        {"title": "app3", "publisher": "publisher3", "category": "personalisation", "img": "GMR_Icon_256x256-96x96.png"},
-        {"title": "app4", "publisher": "publisher4", "category": "games", "img": "skiresort_256x256_splash_en-96x96.jpg"},
-        {"title": "app5", "publisher": "publisher1", "category": "apps", "img": "tenis_256x256_splash_en_TRIAL-96x96.jpg"},
-    ]
 
-    return render_template("index.html", apps=apps)
+    apps = get_apps()
+    pageId = request.args.get('pageId')
+
+    categories = get_apps_categories()
+
+    if not pageId:
+        pageId = 1
+    else:
+        pageId = int(pageId)
+    
+    if ((pageId * 10) - 9) > len(apps):
+        print((pageId * 10) - 9)
+        return redirect(f"/home/?pageId=1")
+    
+    first_index = pageId - 1
+    last_index = first_index + 10
+
+    ids = list(apps.keys())
+    apps_to_show = ids[first_index:last_index]
+    apps_to_show = [apps[id] for id in apps_to_show]
+
+    return render_template("index.html", apps=apps_to_show, categories=categories)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
