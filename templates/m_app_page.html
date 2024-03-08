@@ -105,7 +105,7 @@
                                 {% if loop.index % 2 == 0 %}
                                 <tr class="contentItem ">
                                 {% else %}
-                                <tr class="contentItem  alt">
+                                <tr class="contentItem alt ">
                                 {% endif %}
                                     <td class="thumbnail">
                                         <img src="/static/store/{{ app['img'] }}" alt="thumbnail of {{ app['title'] }}" width="46" height="46" />
@@ -141,7 +141,7 @@
 
             <div id="bottom">
                 <div id="searchContent">
-                    <form action="/search" method="get" id="searchForm">
+                    <form action="/m/search" method="get" id="searchForm">
                         <fieldset id='searchField'>
                             <label for="search">Search</label>
                             <input type="text" id="search" name="q" title="" value="" />
@@ -152,7 +152,7 @@
 
                 <div id="bottomNavigation">
                     <h3>Browse categories</h3>
-                    <a href="/">Our picks</a><br />
+                    <a href="/m/">Our picks</a><br />
                     <a href="/m/applications/" class="selected">Apps</a><br />
                     <a href="/m/games/">Games</a><br />
                     <a href="/m/audiovideo/">Audio &amp; video</a><br />

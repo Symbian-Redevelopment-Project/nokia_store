@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
         <meta name="navigation" content="cursor" />
         {% if category != None %}
-        <title>Nokia Store: Apps :: {{ category }}</title>
+        <title>Nokia Store: Apps :: {{ category_name }}</title>
         {% else %}
         <title>Nokia Store: Apps</title>
         {% endif %}
@@ -51,40 +51,16 @@
             <div id="views">
                 <div class="view">
                     
-                    <table class="contentList" cellspacing="0" width='100%' >
-                        {% for app in apps %}
-                        {% if loop.index % 2 == 0 %}
+                    <br />
+                    <table class="contentList" cellspacing="0" width='100%' style="margin-left: 5px;">
                         <tr class="contentItem ">
-                        {% else %}
-                        <tr class="contentItem  alt">
-                        {% endif %}
-                        
-                            <td class="thumbnail">
-                                <img src="/static/store/{{ app['img'] }}" width="46" height="46" alt="{{ app['title'] }}" />
-                            </td>
-                        
                             <td class="contentType">
-                                <h2 class="title">
-                                    <a href="/m/app/{{ app['id'] }}/">{{ app['title'] }}</a>
-                                </h2>{{ app['category'] }}
+                                <h2 class="title">No apps</h2>
                             </td>
-                        
-                            <td class="contentRatingPrice">
-                                <div class="rating">
-                                    <img src="/static/img/star_p.png" alt="1 star" />
-                                    <img src="/static/img/star_p.png" alt="2 stars" />
-                                    <img src="/static/img/star_p.png" alt="3 stars" />
-                                    <img src="/static/img/star_p.png" alt="4 stars" />
-                                    <img src="/static/img/star_g.png" alt="5 stars" />
-                                </div>
-                            </td>
-                        {% endfor %}
                         </tr>
                     </table>
 
                 </div><!-- end Content Stream -->
-
-                <p class="pagination"><a class="next" href="/applications/?categoryId=14&contentArea=applications&format=mobi&amp;page=2">Next</a></p>
 
                 <!-- SiteCatalyst code -->
                 <div class="beacon"></div>

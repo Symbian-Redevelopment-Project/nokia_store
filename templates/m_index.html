@@ -19,7 +19,7 @@
                     <table>
                         <tr>
                             <td id="logo">
-                                <a id='logoImg' href="/"><img src="/static/img/logo_ovi.png" alt="Nokia" /></a>
+                                <a id='logoImg' href="/m/"><img src="/static/img/logo_ovi.png" alt="Nokia" /></a>
                             </td>
                             <td id="searchLink">
                                 <a href="#searchContent">Search</a>
@@ -29,7 +29,7 @@
                 </div> <!-- end top -->
 
                 <div id="navigation">
-                    <a class="first selected" href="" onclick="return false;">Our picks</a> <b>|</b>
+                    <a class="first selected" href="/m/home/">Our picks</a> <b>|</b>
                     <a href="/m/applications/">Apps</a> <b>|</b>
                     <a href="/m/games/">Games</a> <b>|</b>
                     <a href="/m/audiovideo/">Audio &amp; video</a> <b>|</b>
@@ -96,7 +96,16 @@
 
                 </div><!-- end Content Stream -->
 
-                <p class="pagination"><a class="next" href="/home/?format=mobi&amp;page=2">Next</a></p>
+                {% if previous_page != None and next_page != None %}
+                <p class="pagination">
+                {% if previous_page != None %}
+                    <a href="/m/home/?page={{ previous_page }}">Previous</a>
+                {% endif %}
+                {% if next_page != None %}
+                    <a href="/m/home/?page={{ next_page }}">Next</a>
+                {% endif %}
+                </p>
+                {% endif %}
             <!-- end results -->
 
 
@@ -108,7 +117,7 @@
 
         <div id="bottom">
             <div id="searchContent">
-                <form action="/search" method="get" id="searchForm">
+                <form action="/m/search" method="get" id="searchForm">
                     <fieldset id='searchField'>
                         <label for="search">Search</label>
                         <input type="text" id="search" name="q" title="" value="" /> <input type="submit" id="searchBtn" value="Search" />
@@ -118,7 +127,7 @@
 
             <div id="bottomNavigation">
                 <h3>Browse categories</h3>
-                <a href="/" class="selected">Our picks</a><br />
+                <a href="/m/" class="selected">Our picks</a><br />
                 <a href="/m/applications/">Apps</a><br />
                 <a href="/m/games/">Games</a><br />
                 <a href="/m/audiovideo/">Audio &amp; video</a><br />
