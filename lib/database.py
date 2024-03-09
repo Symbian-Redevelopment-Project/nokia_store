@@ -88,9 +88,9 @@ def get_category_id(categoryName, content_type):
 def search(query):
 
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM apps, games WHERE LOWER(title) LIKE LOWER(%s) ORDER BY title", ('%' + query + '%',))
+    cursor.execute("SELECT * FROM apps WHERE LOWER(title) LIKE LOWER(%s) ORDER BY title", ('%' + query + '%',))
 
     results_list = cursor.fetchall()
     cursor.close()
 
-    return format_results(results_list)
+    return format_results(results_list, "apps")
