@@ -4,9 +4,9 @@
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
         <meta name="navigation" content="cursor" />
         {% if category != None %}
-        <title>Nokia Store: Apps :: {{ category }}</title>
+        <title>Nokia Store: Games :: {{ category }}</title>
         {% else %}
-        <title>Nokia Store: Apps</title>
+        <title>Nokia Store: Games</title>
         {% endif %}
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 
@@ -34,16 +34,16 @@
 
                 <div id="navigation">
                     <a class="first" href="/m/home/">Our picks</a> <b>|</b>
-                    <a href="/m/applications/" class="selected">Apps</a> <b>|</b>
-                    <a href="/m/games/">Games</a> <b>|</b>
+                    <a href="/m/applications/">Apps</a> <b>|</b>
+                    <a href="/m/games/" class="selected">Games</a> <b>|</b>
                     <a href="/m/audiovideo/">Audio &amp; video</a> <b>|</b>
                     <a href="/m/personalize/">Personalisation</a>
                 </div> <!-- end navigation -->
                 
                 {% if category != None %}
-                <div id="crumbNav">Applications&nbsp;&gt; {{ category }}&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; {{ category }}&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% else %}
-                <div id="crumbNav">Applications&nbsp;&gt; All&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; All&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% endif %}
                 
             </div> <!-- end header -->
@@ -52,7 +52,7 @@
                 <div class="view">
                     
                     <table class="contentList" cellspacing="0" width='100%' >
-                        {% for app in apps %}
+                        {% for app in games %}
                         {% if loop.index % 2 == 0 %}
                         <tr class="contentItem ">
                         {% else %}
@@ -65,7 +65,7 @@
                         
                             <td class="contentType">
                                 <h2 class="title">
-                                    <a href="/m/app/{{ app['id'] }}/">{{ app['title'] }}</a>
+                                    <a href="/m/game/{{ app['id'] }}/">{{ app['title'] }}</a>
                                 </h2>{{ app['category'] }}
                             </td>
                         
@@ -84,7 +84,7 @@
 
                 </div><!-- end Content Stream -->
 
-                <p class="pagination"><a class="next" href="/m/applications/?categoryId=14&contentArea=applications&format=mobi&amp;page=2">Next</a></p>
+                <p class="pagination"><a class="next" href="/m/games/?categoryId=14&contentArea=applications&format=mobi&amp;page=2">Next</a></p>
 
                 <!-- SiteCatalyst code -->
                 <div class="beacon"></div>

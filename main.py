@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, redirect, request
-from lib.database import WrongCategoryError, get_apps, get_apps_categories, get_category_name, search
+from lib.database import WrongCategoryError, get_apps, get_games, get_apps_categories, get_category_name, search
 import random
 import math
 
@@ -146,7 +146,7 @@ def _m_applications(categoryId=None):
             return redirect(f"/m/applications/?pageId=1&categoryId={categoryId}")
         else:
             if categoryId:
-                return render_template("m_applications_empty.html", category=get_category_name(categoryId))
+                return render_template("m_applications_empty.html", category=get_category_name(categoryId,"app"))
             else:
                 return render_template("m_applications_empty.html", category=None)
     
@@ -230,6 +230,61 @@ def _root():
     apps_to_show = [apps[id] for id in apps_to_show]
 
     return render_template("index.html", apps=apps_to_show, categories=categories)
+
+@app.route("/m/games/")
+def _rm_games(categoryId=None):
+    if not categoryId:
+        categoryId = request.args.get('categoryId')
+    try:
+        all_apps = get_games(categoryId)
+    except WrongCategoryError:
+        return redirect("/m/games/")
+
+    pageId = request.args.get('pageId')
+
+    if not pageId:
+        pageId = 1
+    else:
+        pageId = int(pageId)
+    
+    if ((pageId * 10) - 9) > len(all_apps):
+        if pageId != 1:
+            return redirect(f"/m/games/?pageId=1&categoryId={categoryId}")
+        else:
+            if categoryId:
+                return render_template("m_games_empty.html", category=get_category_name(categoryId, "game"))
+            else:
+                return render_template("m_games_empty.html", category=None)
+    
+    first_index = pageId - 1
+    last_index = first_index + 10
+
+    ids = list(all_apps.keys())
+    apps_to_show = ids[first_index:last_index]
+    apps_to_show = [all_apps[id] for id in apps_to_show]
+
+    if not categoryId:
+        return render_template('m_games.html', apps=apps_to_show, category=None)
+    else:
+        return render_template('m_games.html', apps=apps_to_show, category=get_category_name(categoryId, "game"))
+
+@app.route("/m/game/<int:id>/")
+def _game(id):
+    game = get_games()[id]
+    game['screenshots'] = [f'{id}_{i}.png' for i in range(game['screenshots_count'])]
+    game['size'] = round(os.stat('static/files/' + game['file']).st_size / (1024 * 1024), 2)
+
+    main_category = "Games"
+    main_category_link = "/m/games/"
+
+    recommended = list(get_games(categoryId=game['category_id']).values())
+    recommended = random.choices(recommended, k=10)
+    recommended = [dict(t) for t in {tuple(d.items()) for d in recommended}]
+    recommended = [d for d in recommended if d['id'] != game['id']]
+    if not recommended:
+        recommended = None
+
+    return render_template("m_game_page.html", game=game, main_category=main_category, main_category_link=main_category_link, recommended=recommended)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
