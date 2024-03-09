@@ -87,10 +87,18 @@
                 {% if previous_page != None or next_page != None %}
                 <p class="pagination">
                 {% if previous_page != None %}
+                {% if category_id != None %}
                     <a href="/m/games/?categoryId={{ category_id }}&pageId={{ previous_page }}">Previous</a>
+                {% else %}
+                    <a href="/m/games/?pageId={{ previous_page }}">Previous</a>
+                {% endif %}
                 {% endif %}
                 {% if next_page != None %}
+                {% if category_id != None %}
                     <a href="/m/games/?categoryId={{ category_id }}&pageId={{ next_page }}">Next</a>
+                {% else %}
+                    <a href="/m/games/?pageId={{ next_page }}">Next</a>
+                {% endif %}
                 {% endif %}
                 </p>
                 {% endif %}
