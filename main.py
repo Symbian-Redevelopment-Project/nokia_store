@@ -3,7 +3,6 @@ from flask import Flask, render_template, redirect, request
 from lib.database import WrongCategoryError, get_content, get_categories, get_category_name, search
 import random
 import math
-from icecream import ic
 
 app = Flask(__name__)
 
@@ -161,8 +160,6 @@ def _m_content(content_type):
             else:
                 return render_template(f"m_{content_type_prefix}_empty.html", category=None)
     else:
-        ic((pageId + 1) * 10)
-        ic(math.ceil(len(all_apps) / 10) * 10)
         if ((pageId + 1) * 10) <= math.ceil(len(all_apps) / 10) * 10:
             if pageId != math.ceil(len(all_apps) / 10):
                 print("1")
@@ -183,8 +180,6 @@ def _m_content(content_type):
         first_index = (pageId * 10) - 10
     
     last_index = first_index + 10
-
-    ic(first_index, last_index)
 
     ids = list(all_apps.keys())
     apps_to_show = ids[first_index:last_index]
