@@ -84,8 +84,16 @@
 
                 </div><!-- end Content Stream -->
 
-                <p class="pagination"><a class="next" href="/m/applications/?categoryId=14&contentArea=applications&format=mobi&amp;page=2">Next</a></p>
-
+                {% if previous_page != None or next_page != None %}
+                <p class="pagination">
+                {% if previous_page != None %}
+                    <a href="/m/applications/?categoryId={{ category_id }}&pageId={{ previous_page }}">Previous</a>
+                {% endif %}
+                {% if next_page != None %}
+                    <a href="/m/applications/?categoryId={{ category_id }}&pageId={{ next_page }}">Next</a>
+                {% endif %}
+                </p>
+                {% endif %}
                 <!-- SiteCatalyst code -->
                 <div class="beacon"></div>
                 <!-- End SiteCatalyst code -->  

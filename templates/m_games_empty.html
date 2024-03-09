@@ -4,9 +4,9 @@
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
         <meta name="navigation" content="cursor" />
         {% if category != None %}
-        <title>Nokia Store: Games :: {{ category_name }}</title>
+        <title>Nokia Store: Apps :: {{ category_name }}</title>
         {% else %}
-        <title>Nokia Store: Games</title>
+        <title>Nokia Store: Apps</title>
         {% endif %}
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 
@@ -34,16 +34,16 @@
 
                 <div id="navigation">
                     <a class="first" href="/m/home/">Our picks</a> <b>|</b>
-                    <a href="/m/applications/" class="selected">Apps</a> <b>|</b>
+                    <a href="/m/applications/">Apps</a> <b>|</b>
                     <a href="/m/games/" class="selected">Games</a> <b>|</b>
                     <a href="/m/audiovideo/">Audio &amp; video</a> <b>|</b>
                     <a href="/m/personalize/">Personalisation</a>
                 </div> <!-- end navigation -->
                 
                 {% if category != None %}
-                <div id="crumbNav">Games&nbsp;&gt; {{ category }}&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; {{ category }}&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% else %}
-                <div id="crumbNav">Games&nbsp;&gt; All&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; All&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% endif %}
                 
             </div> <!-- end header -->
@@ -55,7 +55,7 @@
                     <table class="contentList" cellspacing="0" width='100%' style="margin-left: 5px;">
                         <tr class="contentItem ">
                             <td class="contentType">
-                                <h2 class="title">No games</h2>
+                                <h2 class="title">No games (yet)</h2>
                             </td>
                         </tr>
                     </table>

@@ -13,7 +13,7 @@ conn = psycopg2.connect(database=config["DB_NAME"],
 class WrongCategoryError(Exception):
     pass
 
-def format_results(results_list, type):
+def format_results(results_list, content_type):
 
     results = {}
     for result_list in results_list:
@@ -21,7 +21,7 @@ def format_results(results_list, type):
             "id": result_list[0],
             "title": result_list[1],
             "file": result_list[2],
-            "category_name": get_category_name(result_list[3],type),
+            "category_name": get_category_name(result_list[3], content_type),
             "category_id": result_list[3],
             "description": result_list[4].replace("postgres$#", "\n").strip(),
             "publisher": result_list[5],
@@ -33,55 +33,54 @@ def format_results(results_list, type):
     
     return results
 
-def get_apps(categoryId=None):
+def get_content(categoryId=None, content_type=None):
 
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from apps_categories")
-    categories = cursor.fetchall()
+    categories = get_categories(content_type)
     categories_ids = [result[0] for result in categories]
-    cursor.close()
 
     cursor = conn.cursor()
     if categoryId is None:
-        cursor.execute("SELECT * FROM apps")
+        query = f"SELECT * FROM {content_type}"
+        cursor.execute(query)
     else:
         if int(categoryId) not in categories_ids:
             raise WrongCategoryError
-        cursor.execute("SELECT * FROM apps WHERE category=%s", (int(categoryId),))
+        
+        query = f"SELECT * FROM {content_type} WHERE category=%s ORDER BY title"
+
+        cursor.execute(query, (int(categoryId),))
     
     results_list = cursor.fetchall()
     cursor.close()
 
-    return format_results(results_list, "app")
+    return format_results(results_list, content_type)
 
+def get_categories(content_type):
 
-def get_apps_categories():
+    query = f"SELECT * FROM {content_type}_categories ORDER by name"
 
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM apps_categories")
+    cursor.execute(query)
     results = cursor.fetchall()
     cursor.close()
 
     return results
 
-def get_category_name(categoryId, type):
-    if type == "app":
-        cursor = conn.cursor()
-        cursor.execute("SELECT name FROM apps_categories WHERE id=%s", (int(categoryId),))
-        result = cursor.fetchall()[0][0]
-        cursor.close()
-        return result
-    elif type == "game":
-        cursor = conn.cursor()
-        cursor.execute("SELECT name FROM games_categories WHERE id=%s", (int(categoryId),))
-        result = cursor.fetchall()[0][0]
-        cursor.close()
-        return result
-
-def get_category_id(categoryName):
+def get_category_name(categoryId, content_type):
+    
+    query = f"SELECT name FROM {content_type}_categories WHERE id=%s"
 
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM apps_categories WHERE name=%s", (categoryName,))
+    cursor.execute(query, (int(categoryId),))
+    result = cursor.fetchall()[0][0]
+    cursor.close()
+    return result
+
+def get_category_id(categoryName, content_type):
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"SELECT id FROM {content_type}_categories WHERE name=%s", (categoryName,))
     result = cursor.fetchall()[0][0]
     cursor.close()
     return result
@@ -89,29 +88,9 @@ def get_category_id(categoryName):
 def search(query):
 
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM apps WHERE LOWER(title) LIKE LOWER(%s)", ('%' + query + '%',))
+    cursor.execute("SELECT * FROM apps, games WHERE LOWER(title) LIKE LOWER(%s) ORDER BY title", ('%' + query + '%',))
 
     results_list = cursor.fetchall()
     cursor.close()
 
-    return format_results(results_list, "app")
-
-def get_games(categoryId=None):
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from games_categories")
-    categories = cursor.fetchall()
-    categories_ids = [result[0] for result in categories]
-    cursor.close()
-
-    cursor = conn.cursor()
-    if categoryId is None:
-        cursor.execute("SELECT * FROM games")
-    else:
-        if int(categoryId) not in categories_ids:
-            raise WrongCategoryError
-        cursor.execute("SELECT * FROM games WHERE category=%s", (int(categoryId),))
-    
-    results_list = cursor.fetchall()
-    cursor.close()
-
-    return format_results(results_list, "game")
+    return format_results(results_list)
