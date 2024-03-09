@@ -4,14 +4,14 @@
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
         <meta name="navigation" content="cursor" />
         {% if category != None %}
-        <title>Nokia Store: Apps :: {{ category }}</title>
+        <title>Nokia Store: Games :: {{ category }}</title>
         {% else %}
-        <title>Nokia Store: Apps</title>
+        <title>Nokia Store: Games</title>
         {% endif %}
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                
+
         <link type="text/css" rel="stylesheet" media="all" charset="utf-8" href="/static/css/global-min.css" />
-    
+
         <link rel="shortcut icon" href="/static/img/favicon1.ico" type="image/x-icon"/>
     </head>
 
@@ -34,23 +34,23 @@
 
                 <div id="navigation">
                     <a class="first" href="/m/home/">Our picks</a> <b>|</b>
-                    <a href="/m/applications/" class="selected">Apps</a> <b>|</b>
-                    <a href="/m/games/">Games</a> <b>|</b>
+                    <a href="/m/applications/">Apps</a> <b>|</b>
+                    <a href="/m/games/" class="selected">Games</a> <b>|</b>
                     <a href="/m/audiovideo/">Audio &amp; video</a> <b>|</b>
                     <a href="/m/personalize/">Personalisation</a>
                 </div> <!-- end navigation -->
-                
+
                 {% if category != None %}
-                <div id="crumbNav">Applications&nbsp;&gt; {{ category }}&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; {{ category }}&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% else %}
-                <div id="crumbNav">Applications&nbsp;&gt; All&nbsp;<a href="/m/applications/browse/">Change</a></div>
+                <div id="crumbNav">Games&nbsp;&gt; All&nbsp;<a href="/m/games/browse/">Change</a></div>
                 {% endif %}
-                
+
             </div> <!-- end header -->
 
             <div id="views">
                 <div class="view">
-                    
+
                     <table class="contentList" cellspacing="0" width='100%' >
                         {% for app in apps %}
                         {% if loop.index % 2 == 0 %}
@@ -58,17 +58,17 @@
                         {% else %}
                         <tr class="contentItem  alt">
                         {% endif %}
-                        
+
                             <td class="thumbnail">
                                 <img src="/static/store/{{ app['img'] }}" width="46" height="46" alt="{{ app['title'] }}" />
                             </td>
-                        
+
                             <td class="contentType">
                                 <h2 class="title">
-                                    <a href="/m/app/{{ app['id'] }}/">{{ app['title'] }}</a>
+                                    <a href="/m/game/{{ app['id'] }}/">{{ app['title'] }}</a>
                                 </h2>{{ app['category'] }}
                             </td>
-                        
+
                             <td class="contentRatingPrice">
                                 <div class="rating">
                                     <img src="/static/img/star_p.png" alt="1 star" />
@@ -88,20 +88,21 @@
                 <p class="pagination">
                 {% if previous_page != None %}
                 {% if category_id != None %}
-                    <a href="/m/applications/?categoryId={{ category_id }}&pageId={{ previous_page }}">Previous</a>
+                    <a href="/m/games/?categoryId={{ category_id }}&pageId={{ previous_page }}">Previous</a>
                 {% else %}
-                    <a href="/m/applications/?pageId={{ previous_page }}">Previous</a>
+                    <a href="/m/games/?pageId={{ previous_page }}">Previous</a>
                 {% endif %}
                 {% endif %}
                 {% if next_page != None %}
                 {% if category_id != None %}
-                    <a href="/m/applications/?categoryId={{ category_id }}&pageId={{ next_page }}">Next</a>
+                    <a href="/m/games/?categoryId={{ category_id }}&pageId={{ next_page }}">Next</a>
                 {% else %}
-                <a href="/m/applications/?pageId={{ next_page }}">Next</a>
+                    <a href="/m/games/?pageId={{ next_page }}">Next</a>
                 {% endif %}
                 {% endif %}
                 </p>
                 {% endif %}
+
                 <!-- SiteCatalyst code -->
                 <div class="beacon"></div>
                 <!-- End SiteCatalyst code -->  
@@ -121,17 +122,17 @@
                 <div id="bottomNavigation">
                     <h3>Browse categories</h3>
                     <a href="/m/">Our picks</a><br />
-                    <a href="/m/applications/" class="selected">Apps</a><br />
-                    <a href="/m/games/">Games</a><br />
+                    <a href="/m/applications/">Apps</a><br />
+                    <a href="/m/games/" class="selected">Games</a><br />
                     <a href="/m/audiovideo/">Audio &amp; video</a><br />
                     <a href="/m/personalize/">Personalisation</a><br />
-    
+
                     <div class="settings">
                         <a href="http://www.nokia.com/support/">Help</a>
                     </div>
                 </div> <!-- end navigation -->
             </div>
-                        
+
             <div id="footer">
                 <a class="accountStatusChange" href="https://store.ovi.mobi/login">Sign in</a>  |
                 <a href="http://store.ovi.mobi/legal/terms/store">Terms</a> |
