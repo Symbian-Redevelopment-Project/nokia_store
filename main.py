@@ -5,11 +5,12 @@ import random
 import math
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
-@app.route("/m/app/<int:id>/")
+@app.route("/m/app/<int:id>")
 def _m_app(id):
     return _m_item_page(id, content_type="apps")
-@app.route("/m/game/<int:id>/")
+@app.route("/m/game/<int:id>")
 def _m_game(id):
     return _m_item_page(id, content_type="games")
 
@@ -36,10 +37,10 @@ def _m_item_page(id, content_type):
 
     return render_template(template, app=app, recommended=recommended)
 
-@app.route("/m/app/<int:id>/images/")
+@app.route("/m/app/<int:id>/images")
 def _m_app_images(id):
     return _m_item_images(id, "apps")
-@app.route("/m/game/<int:id>/images/")
+@app.route("/m/game/<int:id>/images")
 def _m_game_images(id):
     return _m_item_images(id, "games")
 
@@ -58,19 +59,11 @@ def _m_item_images(id, content_type):
     return render_template("m_app_images.html", app=app)
 
 @app.route("/m/applications/browse")
-def __m_applications_browse():
-    return redirect("/m/applications/browse/")
-
-@app.route("/m/applications/browse/")
 def _m_applications_browse():
     categories = get_categories("apps")
     return render_template("m_applications_browse.html", categories=categories)
 
 @app.route("/m/games/browse")
-def __m_games_browse():
-    return redirect("/m/applications/browse/")
-
-@app.route("/m/games/browse/")
 def _m_games_browse():
     categories = get_categories("games")
     return render_template("m_games_browse.html", categories=categories)
@@ -122,11 +115,11 @@ def _m_search():
     else:
         return render_template("m_search.html", results=apps_to_show, search_query=query, next_page=next_page, previous_page=previous_page)
     
-@app.route("/m/applications/")
+@app.route("/m/applications")
 def _m_applications():
     return _m_content("apps")
 
-@app.route("/m/games/")
+@app.route("/m/games")
 def _m_games():
     return _m_content("games")
 
@@ -190,13 +183,12 @@ def _m_content(content_type):
     else:
         return render_template(f'm_{content_type_prefix}.html', apps=apps_to_show, category=get_category_name(categoryId, content_type), category_id=categoryId, next_page=next_page, previous_page=previous_page)
 
+@app.route("/")
 @app.route("/m")
-@app.route("/m/home")
-@app.route("/m/")
 def __m_root():
     return redirect("/m/home/")
 
-@app.route("/m/home/")
+@app.route("/m/home")
 def _m_root():
 
     apps = get_content(content_type="apps")
