@@ -1,8 +1,10 @@
 import os
-from flask import Flask, render_template, redirect, request
-from lib.database import WrongCategoryError, get_content, get_categories, get_category_name, search
 import random
 import math
+
+from flask import Flask, render_template, redirect, request
+
+from lib import database as db
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -16,14 +18,14 @@ def _m_game(id):
 
 def _m_item_page(id, content_type):
 
-    app = get_content(content_type=content_type)[id]
+    app = db.get_content(content_type=content_type)[id]
     app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
     try:
         app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
     except FileNotFoundError:
         app['size'] = 0
 
-    recommended = list(get_content(content_type=content_type, categoryId=app['category_id']).values())
+    recommended = list(db.get_content(content_type=content_type, categoryId=app['category_id']).values())
     recommended = random.choices(recommended, k=10)
     recommended = [dict(t) for t in {tuple(d.items()) for d in recommended}]
     recommended = [d for d in recommended if d['id'] != app['id']]
@@ -45,7 +47,7 @@ def _m_game_images(id):
     return _m_item_images(id, "games")
 
 def _m_item_images(id, content_type):
-    app = get_content(content_type=content_type)[id]
+    app = db.get_content(content_type=content_type)[id]
 
     if not app['screenshots_count'] > 0:
         if type == "apps":
@@ -60,12 +62,12 @@ def _m_item_images(id, content_type):
 
 @app.route("/m/applications/browse")
 def _m_applications_browse():
-    categories = get_categories("apps")
+    categories = db.get_categories("apps")
     return render_template("m_applications_browse.html", categories=categories)
 
 @app.route("/m/games/browse")
 def _m_games_browse():
-    categories = get_categories("games")
+    categories = db.get_categories("games")
     return render_template("m_games_browse.html", categories=categories)
 
 @app.route("/m/search")
@@ -75,7 +77,7 @@ def _m_search():
     if not query:
         return redirect("/m/home/")
     
-    results = search(query)
+    results = db.search(query)
 
     pageId = request.args.get('pageId')
 
@@ -131,10 +133,11 @@ def _m_content(content_type):
         content_type_prefix = "games"
 
     categoryId = request.args.get('categoryId')
+    category_name = db.get_category_name(categoryId, content_type) if categoryId else None
     
     try:
-        all_apps = get_content(categoryId, content_type)
-    except WrongCategoryError:
+        all_apps = db.get_content(categoryId, content_type)
+    except db.WrongCategoryError:
         return redirect(f"/m/{content_type_prefix}/")
 
     pageId = request.args.get('pageId')
@@ -146,16 +149,18 @@ def _m_content(content_type):
     
     if (pageId * 10) > math.ceil(len(all_apps) / 10) * 10:
         if pageId != 1:
-            return redirect(f"/m/{content_type_prefix}/?pageId=1&categoryId={categoryId}")
+            if categoryId:
+                return redirect(f"/m/{content_type_prefix}/?pageId=1&categoryId={categoryId}")
+            else:
+                return redirect(f"/m/{content_type_prefix}/?pageId=1")
         else:
             if categoryId:
-                return render_template(f"m_{content_type_prefix}_empty.html", category=get_category_name(categoryId, content_type))
+                return render_template(f"m_{content_type_prefix}_empty.html", category=category_name)
             else:
                 return render_template(f"m_{content_type_prefix}_empty.html", category=None)
     else:
         if ((pageId + 1) * 10) <= math.ceil(len(all_apps) / 10) * 10:
             if pageId != math.ceil(len(all_apps) / 10):
-                print("1")
                 next_page = pageId + 1
             else:
                 next_page = None
@@ -181,7 +186,7 @@ def _m_content(content_type):
     if not categoryId:
         return render_template(f'm_{content_type_prefix}.html', apps=apps_to_show, category=None, category_id=categoryId, next_page=next_page, previous_page=previous_page)
     else:
-        return render_template(f'm_{content_type_prefix}.html', apps=apps_to_show, category=get_category_name(categoryId, content_type), category_id=categoryId, next_page=next_page, previous_page=previous_page)
+        return render_template(f'm_{content_type_prefix}.html', apps=apps_to_show, category=category_name, category_id=categoryId, next_page=next_page, previous_page=previous_page)
 
 @app.route("/")
 @app.route("/m")
@@ -191,7 +196,7 @@ def __m_root():
 @app.route("/m/home")
 def _m_root():
 
-    apps = get_content(content_type="apps")
+    apps = db.get_content(content_type="apps")
     pageId = request.args.get('pageId')
 
     if not pageId:
