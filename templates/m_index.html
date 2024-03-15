@@ -22,7 +22,7 @@
                                 <a id='logoImg' href="/m/"><img src="/static/img/logo_ovi.png" alt="Nokia" /></a>
                             </td>
                             <td id="searchLink">
-                                <a href="#searchField">Search</a>
+                                <a href="#searchContent">Search</a>
                             </td>
                         </tr>
                     </table>
@@ -94,57 +94,55 @@
 
                     </table>
 
-                </div><!-- end Content Stream -->
+                <!-- </div> end Content Stream -->
 
-                {% if previous_page != None and next_page != None %}
-                <p class="pagination">
-                {% if previous_page != None %}
-                    <a href="/m/home/?page={{ previous_page }}">Previous</a>
-                {% endif %}
-                {% if next_page != None %}
-                    <a href="/m/home/?page={{ next_page }}">Next</a>
-                {% endif %}
-                </p>
-                {% endif %}
-            <!-- end results -->
+                    {% if previous_page != None and next_page != None %}
+                    <p class="pagination">
+                    {% if previous_page != None %}
+                        <a href="/m/home/?page={{ previous_page }}">Previous</a>
+                    {% endif %}
+                    {% if next_page != None %}
+                        <a href="/m/home/?page={{ next_page }}">Next</a>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                <!-- end results -->
 
 
-            <!-- SiteCatalyst code -->
-            <div class="beacon"></div>
-            <!-- End SiteCatalyst code -->
-            </div>
-        </div> <!-- end views -->
+                <div class="beacon"></div>
 
-        <div id="bottom">
-            <div id="searchContent">
-                <form action="/m/search" method="get" id="searchForm">
-                    <fieldset id='searchField'>
-                        <label for="search">Search</label>
-                        <input type="text" id="search" name="q" title="" value="" /> <input type="submit" id="searchBtn" value="Search" />
-                    </fieldset>
-                </form>
-            </div> <!-- end search -->
-
-            <div id="bottomNavigation">
-                <h3>Browse categories</h3>
-                <a href="/m/" class="selected">Our picks</a><br />
-                <a href="/m/applications/">Apps</a><br />
-                <a href="/m/games/">Games</a><br />
-                <a href="/m/audiovideo/">Audio &amp; video</a><br />
-                <a href="/m/personalize/">Personalisation</a><br />
-
-                <div class="settings">
-		            <a href="http://www.nokia.com/support/">Help</a>
                 </div>
-            </div> <!-- end navigation -->
-        </div>
-        
+            </div> <!-- end views -->
 
-        <div id="footer">
-            <a class="accountStatusChange" href="https://store.ovi.mobi/login">Sign in</a>  |
-            <a href="http://www.nokia.com/mmo-serviceterms">Terms</a> |
-            <a href="http://www.nokia.com/mmo-privacypolicy">Privacy</a> |
-            <a href="http://store.ovi.mobi/help/faqs">Help</a><br/>
+            <div id="bottom">
+                <div id="searchContent">
+                    <form action="/m/search" method="get" id="searchForm">
+                        <fieldset id='searchField'>
+                            <label for="search">Search</label>
+                            <input type="text" id="search" name="q" title="" value="" /> <input type="submit" id="searchBtn" value="Search" />
+                        </fieldset>
+                    </form>
+                </div> <!-- end search -->
+
+                <div id="bottomNavigation">
+                    <h3>Browse categories</h3>
+                    <a href="/m/" class="selected">Our picks</a><br />
+                    <a href="/m/applications/">Apps</a><br />
+                    <a href="/m/games/">Games</a><br />
+                    <a href="/m/audiovideo/">Audio &amp; video</a><br />
+                    <a href="/m/personalize/">Personalisation</a><br />
+
+                    <div class="settings">
+		                <a href="/support/">Help</a>
+                    </div>
+                </div> <!-- end navigation -->
+            </div>
+
+            <div id="footer">
+                <a class="accountStatusChange" href="/login">Sign in</a>  |
+                <a href="/legal/terms/store">Terms</a> |
+                <a href="/legal/privacy">Privacy</a> |
+                <a href="/help/faqs">Help</a><br/>
             © Symbian Redevelopment Project 2024</div>
         </div> <!-- end wrapper -->
     </body>

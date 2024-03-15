@@ -10,9 +10,7 @@
         <link rel="shortcut icon" href="/static/img/favicon1.ico" type="image/x-icon" />
     </head>
 
-    <body>
-
-        
+    <body>   
         <div id="wrapper">
             <div id="header">
                 <div id="top">
@@ -27,19 +25,17 @@
                         </tr>
                     </table>
                 </div> <!-- end top -->
-
                                 
                 <div id="crumbNav">
                     <a href="/m/applications/" id="crumbNavContentArea">Applications</a>
                         &gt; <a href="/m/applications?categoryId={{ app['category_id'] }}" id="crumbNavContentArea">{{ app['category_name'] }}</a>
-                        &gt; {{ app['title'] }}</div>
-                    </div> <!-- end header -->
+                        &gt; {{ app['title'] }}
+                </div>
+            </div> <!-- end header -->
 
             <div id="views">
-                <div class="view">
-                    
+                <div class="view">   
                     <div class="contentItem" id="c359613">
-    
                         <table class="contentInfo hreview-aggregate">
                             <tr>
                                 <td class="feature">
@@ -84,7 +80,6 @@
                         <div class="description">
                             <p>{{ app['description']|replace('\\n', '<br />')|safe }}</p>
                         </div> <!-- end description -->
-    
             
                         <div class="publisher">
                             <a href="#" onclick="return false;">See all by {{ app['publisher'] }}</a>
@@ -132,9 +127,7 @@
 
                     </div> <!-- end content item -->
 
-                    <!-- SiteCatalyst code -->
                     <div class="beacon"></div>
-<!-- End SiteCatalyst code -->
                 </div>
             </div> <!-- end views -->
 
@@ -154,20 +147,19 @@
                     <a href="/m/">Our picks</a><br />
                     <a href="/m/applications/" class="selected">Apps</a><br />
                     <a href="/m/games/">Games</a><br />
-                    <a href="/m/audiovideo/">Audio &amp; video</a><br />
                     <a href="/m/personalize/">Personalisation</a><br />
     
                     <div class="settings">
-                        <a href="http://www.nokia.com/support/">Help</a>
+                        <a href="/support/">Help</a>
                     </div>
                 </div> <!-- end navigation -->
             </div>
                         
             <div id="footer">
-                <a class="accountStatusChange" href="https://store.ovi.mobi/login">Sign in</a>  |
-                <a href="http://store.ovi.mobi/legal/terms/store">Terms</a> |
-                <a href="http://store.ovi.mobi/legal/privacy">Privacy</a> |
-                <a href="http://store.ovi.mobi/help/faqs">Help</a><br/>
+                <a class="accountStatusChange" href="/login">Sign in</a>  |
+                <a href="/legal/terms/store">Terms</a> |
+                <a href="/legal/privacy">Privacy</a> |
+                <a href="/help/faqs">Help</a><br/>
             © Symbian Redevelopment Project 2024</div>
         </div> <!-- end wrapper -->
     </body>
