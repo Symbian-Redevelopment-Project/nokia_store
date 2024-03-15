@@ -77,7 +77,7 @@ def _m_search():
     if not query:
         return redirect("/m/home/")
     
-    results = db.search(query)
+    results = db.search(query, ("apps", "games"))
 
     pageId = request.args.get('pageId')
 

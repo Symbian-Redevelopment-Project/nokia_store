@@ -28,7 +28,8 @@ def format_results(results_list, content_type):
             "version": result_list[6],
             "platform": result_list[7],
             "screenshots_count": result_list[8],
-            'img': result_list[9]
+            "img": result_list[9],
+            "content_type": content_type
         }
     
     return results
@@ -85,12 +86,19 @@ def get_category_id(categoryName, content_type):
     cursor.close()
     return result
 
-def search(query):
+def search(query, databases):
 
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM apps WHERE LOWER(title) LIKE LOWER(%s) ORDER BY title", ('%' + query + '%',))
+    if not databases:
+        databases = ("apps", "games")
 
-    results_list = cursor.fetchall()
-    cursor.close()
+    results = {}
 
-    return format_results(results_list, "apps")
+    for database in databases:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM {database} WHERE LOWER(title) LIKE LOWER(%s) ORDER BY title", ('%' + query + '%',))
+        results_list = cursor.fetchall()
+        cursor.close()
+
+        results = results | format_results(results_list, database)
+
+    return results
