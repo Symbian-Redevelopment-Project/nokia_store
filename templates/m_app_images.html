@@ -33,14 +33,21 @@
                     <div class="contentItem">
                         {% for screenshot in app['screenshots'] %}
                         <div class="image">
-			                <a href="/static/screenshots/{{ screenshot }}">
-	                            <img src="/static/screenshots/{{ screenshot }}" width="29" height="52" alt="{{ app['title'] }}" />
+			                <a href="/static/screenshots/{{ content_type }}/{{ screenshot }}">
+	                            <img src="/static/screenshots/{{ content_type }}/{{ screenshot }}" width="29" height="52" alt="{{ app['title'] }}" />
 	                        </a>
 		                </div>
                         {% endfor %}
     
                         <div class="options">
-                            <a href="/m/app/{{ app['id'] }}/">&lt; Back to {{ app['title'] }}</a>
+                            {% if content_type == 'apps' %}
+                            <a href="/m/app/{{ app['id'] }}/">
+                            {% elif content_type == 'games' %}
+                            <a href="/m/game/{{ app['id'] }}/">
+                            {% elif content_type == 'themes' %}
+                            <a href="/m/theme/{{ app['id'] }}/">
+                            {% endif %}
+                            &lt; Back to {{ app['title'] }}</a>
                         </div>
                     </div> <!-- end content -->
                     <div class="beacon"></div>

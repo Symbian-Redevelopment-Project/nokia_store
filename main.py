@@ -58,7 +58,7 @@ def _m_item_images(id, content_type):
         return redirect(url)
 
     app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
-    return render_template("m_app_images.html", app=app)
+    return render_template("m_app_images.html", app=app, content_type=content_type)
 
 @app.route("/m/applications/browse")
 def _m_applications_browse():
