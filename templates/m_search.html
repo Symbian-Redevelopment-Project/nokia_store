@@ -61,7 +61,13 @@
             
                                 <td class="contentType">
                                     <h2 class="title">
-                                        <a href="/m/app/{{ result['id'] }}">{{ result['title'] }}</a>
+                                        {% if result['content_type'] == 'apps' %}
+                                        <a href="/m/app/{{ result['id'] }}">
+                                        {% elif result['content_type'] == 'games' %}
+                                        <a href="/m/game/{{ result['id'] }}">
+                                        {% elif result['content_type'] == 'themes' %}
+                                        <a href="/m/game/{{ themes['id'] }}">
+                                        {% endif %}{{ result['title'] }}</a>
                                     </h2>{{ result['category'] }}
                                 </td>
             
