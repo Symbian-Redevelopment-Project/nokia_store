@@ -28,7 +28,7 @@ def format_results(results_list, content_type):
             "version": result_list[6],
             "platform": result_list[7],
             "screenshots_count": result_list[8],
-            "img": result_list[9],
+            "img": os.path.join(content_type, result_list[9]),
             "content_type": content_type
         }
     
