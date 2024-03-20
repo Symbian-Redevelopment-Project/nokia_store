@@ -1,8 +1,9 @@
-import psycopg2
 import os
-import json
 
-config = json.loads(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.json"), "r").read())
+import bcrypt
+import psycopg2
+
+from .config import config
 
 conn = psycopg2.connect(database=config["DB_NAME"],
     host=config["DB_HOST"],
@@ -27,6 +28,7 @@ def format_results(results_list, content_type):
             "publisher": result_list[5],
             "version": result_list[6],
             "platform": result_list[7],
+            "platformName": get_platform_name(result_list[7]),
             "screenshots_count": result_list[8],
             "img": os.path.join(content_type, result_list[9]),
             "content_type": content_type
@@ -34,22 +36,29 @@ def format_results(results_list, content_type):
     
     return results
 
-def get_content(categoryId=None, content_type=None):
+def get_content(categoryId=None, content_type=None, platformId="all"):
 
     categories = get_categories(content_type)
     categories_ids = [result[0] for result in categories]
 
     cursor = conn.cursor()
     if categoryId is None:
-        query = f"SELECT * FROM {content_type}"
-        cursor.execute(query)
+        if platformId == "all":
+            query = f"SELECT * FROM {content_type}"
+            cursor.execute(query)
+        else:
+            query = f"SELECT * FROM {content_type} WHERE platform=%s"
+            cursor.execute(query, (platformId,))
     else:
         if int(categoryId) not in categories_ids:
             raise WrongCategoryError
         
-        query = f"SELECT * FROM {content_type} WHERE category=%s ORDER BY title"
-
-        cursor.execute(query, (int(categoryId),))
+        if platformId == "all":
+            query = f"SELECT * FROM {content_type} WHERE category=%s ORDER BY title"
+            cursor.execute(query, (int(categoryId),))
+        else:
+            query = f"SELECT * FROM {content_type} WHERE category=%s AND platform=%s ORDER BY title"
+            cursor.execute(query, (int(categoryId), platformId))
     
     results_list = cursor.fetchall()
     cursor.close()
@@ -67,24 +76,62 @@ def get_categories(content_type):
 
     return results
 
+def get_platforms():
+
+    query = f"SELECT * FROM platforms ORDER by name"
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+
+    return results
+
+def get_platform_name(platformId):
+    
+    query = f"SELECT name FROM platforms WHERE id=%s"
+
+    cursor = conn.cursor()
+    cursor.execute(query, (platformId,))
+    result = cursor.fetchone()
+    if not result:
+        return None
+    cursor.close()
+    return result[0]
+
+def get_platform_id(platformName):
+
+    cursor = conn.cursor()
+
+    cursor.execute(f"SELECT id FROM platforms WHERE name=%s", (platformName,))
+    result = cursor.fetchone()
+    if not result:
+        return None
+    cursor.close()
+    return result[0]
+
 def get_category_name(categoryId, content_type):
     
     query = f"SELECT name FROM {content_type}_categories WHERE id=%s"
 
     cursor = conn.cursor()
     cursor.execute(query, (int(categoryId),))
-    result = cursor.fetchall()[0][0]
+    result = cursor.fetchone()
+    if not result:
+        return None
     cursor.close()
-    return result
+    return result[0]
 
 def get_category_id(categoryName, content_type):
 
     cursor = conn.cursor()
 
     cursor.execute(f"SELECT id FROM {content_type}_categories WHERE name=%s", (categoryName,))
-    result = cursor.fetchall()[0][0]
+    result = cursor.fetchone()
+    if not result:
+        return None
     cursor.close()
-    return result
+    return result[0]
 
 def search(query, databases):
 
@@ -102,3 +149,103 @@ def search(query, databases):
         results = results | format_results(results_list, database)
 
     return results
+
+class AccountSystem:
+    def __init__(self):
+        pass
+
+    def _generate_password(self, user_password):
+        user_password = user_password.encode('utf-8')
+        salt = bcrypt.gensalt()
+
+        hashed_password = bcrypt.hashpw(user_password, salt)
+        return hashed_password.decode('utf-8')
+    
+    def get_user(self, email=None, id=None):
+        cursor = conn.cursor()
+        if email:
+            cursor.execute("SELECT id, email, username, password, confirmed, banned, banned_reason FROM users WHERE email=%s AND active=true", (email,))
+        elif id:
+            cursor.execute("SELECT id, email, username, password, confirmed, banned, banned_reason FROM users WHERE id=%s AND active=true", (id,))
+        else:
+            raise TypeError("Provide either id or email")
+        
+        result = cursor.fetchone()
+        cursor.close()
+
+        if not result:
+            return None
+        
+        user = {
+            'id': result[0],
+            'email': result[1],
+            'username': result[2],
+            'password': result[3],
+            'confirmed': result[4],
+            'banned': result[5],
+            'banned_reason': result[6]
+        }
+
+        return user
+
+    def confirm_user(self, email):
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET confirmed=true WHERE email=%s", (email,))
+        conn.commit()
+
+    def get_emails(self):
+        cursor = conn.cursor()
+        cursor.execute("SELECT email FROM users WHERE active=true")
+
+        results = cursor.fetchall()
+        cursor.close()
+        results = [result[0] for result in results]
+        
+        return results
+    
+    def get_usernames(self):
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM users WHERE active=true")
+
+        results = cursor.fetchall()
+        cursor.close()
+        results = [result[0] for result in results]
+        
+        return results
+
+    def register(self, email, user_password, username):
+
+        hashed_password = self._generate_password(user_password)
+
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (email, password, username, confirmed) VALUES (%s, %s, %s, false)", (email, hashed_password, username))
+        cursor.close()
+
+        conn.commit()
+
+    def check_credentials(self, email, user_password):
+        emails = self.get_emails()
+        if email not in emails:
+            return False
+
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM users WHERE email=%s AND active=true", (email,))
+        
+        result = cursor.fetchone()
+        cursor.close()
+
+        hashed_password = result[0].encode('utf-8')
+        user_password = user_password.encode('utf-8')
+
+        return bcrypt.checkpw(user_password, hashed_password)
+    
+    def get_user_id(self, email):
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users WHERE email=%s AND active=true", (email,))
+
+        result = cursor.fetchone()
+        cursor.close()
+
+        return result[0] if result else None
+        
+account_system = AccountSystem()
