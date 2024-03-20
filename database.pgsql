@@ -175,6 +175,18 @@ ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
 
 
 --
+-- Name: platforms; Type: TABLE; Schema: public; Owner: wunder
+--
+
+CREATE TABLE public.platforms (
+    id character varying NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.platforms OWNER TO wunder;
+
+--
 -- Name: themes; Type: TABLE; Schema: public; Owner: wunder
 --
 
@@ -252,6 +264,46 @@ ALTER SEQUENCE public.themes_id_seq OWNED BY public.themes.id;
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: wunder
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    email character varying(100) NOT NULL,
+    password character varying NOT NULL,
+    active boolean DEFAULT true,
+    confirmed boolean DEFAULT false,
+    banned boolean DEFAULT false,
+    banned_reason character varying DEFAULT ''::character varying,
+    username character varying NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO wunder;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: wunder
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO wunder;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: wunder
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
 -- Name: apps id; Type: DEFAULT; Schema: public; Owner: wunder
 --
 
@@ -294,10 +346,18 @@ ALTER TABLE ONLY public.themes_categories ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: wunder
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
 -- Data for Name: apps; Type: TABLE DATA; Schema: public; Owner: wunder
 --
 
 COPY public.apps (id, title, file, category, description, publisher, version, platform, screenshots_count, img, visible) FROM stdin;
+1	App	#	1	Description	Publisher	1.00(0)	s60	0	Store.png	t
 \.
 
 
@@ -328,6 +388,15 @@ COPY public.games_categories (id, name) FROM stdin;
 
 
 --
+-- Data for Name: platforms; Type: TABLE DATA; Schema: public; Owner: wunder
+--
+
+COPY public.platforms (id, name) FROM stdin;
+s60	Symbian
+\.
+
+
+--
 -- Data for Name: themes; Type: TABLE DATA; Schema: public; Owner: wunder
 --
 
@@ -345,6 +414,14 @@ COPY public.themes_categories (id, name) FROM stdin;
 
 
 --
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: wunder
+--
+
+COPY public.users (id, email, password, active, confirmed, banned, banned_reason, username) FROM stdin;
+\.
+
+
+--
 -- Name: apps_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
 --
 
@@ -355,7 +432,7 @@ SELECT pg_catalog.setval('public.apps_categories_id_seq', 1, true);
 -- Name: apps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
 --
 
-SELECT pg_catalog.setval('public.apps_id_seq', 1, false);
+SELECT pg_catalog.setval('public.apps_id_seq', 1, true);
 
 
 --
@@ -384,6 +461,13 @@ SELECT pg_catalog.setval('public.themes_categories_id_seq', 1, true);
 --
 
 SELECT pg_catalog.setval('public.themes_id_seq', 1, false);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 
 --
@@ -419,6 +503,14 @@ ALTER TABLE ONLY public.games
 
 
 --
+-- Name: platforms platforms_pkey; Type: CONSTRAINT; Schema: public; Owner: wunder
+--
+
+ALTER TABLE ONLY public.platforms
+    ADD CONSTRAINT platforms_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: themes_categories themes_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: wunder
 --
 
@@ -432,6 +524,14 @@ ALTER TABLE ONLY public.themes_categories
 
 ALTER TABLE ONLY public.themes
     ADD CONSTRAINT themes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: wunder
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
 --
