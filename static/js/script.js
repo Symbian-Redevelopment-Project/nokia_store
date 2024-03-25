@@ -101,3 +101,26 @@ function validateRegisterForm() {
         password_required.style.display = "none";
     };
 }
+
+// function updateRating(content_id, rating, review_div_name) {
+
+//     rating = Number(rating)
+    
+//     content_tr = document.getElementById(content_id)
+//     rating_div = content_tr.getElementsByClassName(review_div_name)[0]
+
+//     if (rating == 0) {
+//         rating_div.innerHTML = '<img src="/static/img/star_p.png" alt="1 star" /><img src="/static/img/star_p.png" alt="2 stars" /><img src="/static/img/star_p.png" alt="3 stars" /><img src="/static/img/star_p.png" alt="4 stars" /><img src="/static/img/star_p.png" alt="5 stars" />'
+//         return
+//     }
+
+//     for (let i = 1; i <= rating; i++) {
+//         rating_div.innerHTML += '<img src="/static/img/star_p.png" alt="' + String(i)  + ' stars" />'
+//     }
+
+//     if (rating != 5) {
+//         for (let i = rating + 1; i <= 5; i++) {
+//             rating_div.innerHTML += '<img src="/static/img/star_g.png" alt="' + String(i)  + ' stars" />'
+//         }
+//     }
+// }

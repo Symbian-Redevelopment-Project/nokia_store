@@ -42,6 +42,12 @@ def session_logout():
     session.pop('username', None)
     session.permanent = True
 
+def is_logged():
+    if session.get('loggedIn'):
+        return True
+    else:
+        return False
+
 @auth.route("/login/")
 def _login():
     if session.get("loggedIn") is True:

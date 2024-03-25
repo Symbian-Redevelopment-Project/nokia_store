@@ -5,7 +5,7 @@ import math
 from flask import Blueprint, render_template, request, redirect, url_for, session
 
 from . import database as db
-from .auth import session_logout
+from .auth import session_logout, is_logged
 
 store = Blueprint("store", __name__, template_folder="templates")
 
@@ -29,6 +29,71 @@ def check_platform_id():
             session_logout()
             return render_template('auth/banned.html', reason=user['banned_reason'])
 
+@store.route("/api/rate")
+def _api_rate():
+    username = request.args.get("username")
+    rating = request.args.get("rating")
+    content_id = request.args.get("content_id")
+    content_type = request.args.get("content_type")
+
+    if not username or not rating or not content_id or not content_type:
+        return {}
+    else:
+        if session['username'] != username:
+            return {}
+    
+    user_id = db.account_system.get_user_id(username=username)
+    db.rate(int(rating), user_id, content_id, content_type)
+    
+    rating = db.get_rating(content_id, content_type)
+    return {'rating': rating}
+
+@store.route("/app/<int:id>/rate", methods=["GET", "POST"])
+def _app_rate(id):
+    if request.method == "GET":
+        return _rate_form(id, "apps")
+    else:
+        return rate(id, "apps")
+
+@store.route("/game/<int:id>/rate", methods=["GET", "POST"])
+def _game_rate(id):
+    if request.method == "GET":
+        return _rate_form(id, "games")
+    else:
+        return rate(id, "games")
+
+def _rate_form(id, content_type):
+
+    prefixes = {
+        "apps": "app",
+        "games": "game",
+        "themes": "theme"
+    }
+
+    if not is_logged():
+        return redirect(url_for(f"store._{prefixes[content_type]}", id=id))
+    
+    app = db.get_content(id=id, content_type=content_type)
+    return render_template("rate.html", app=app, prefixes=prefixes)
+    
+def rate(id, content_type):
+
+    prefixes = {
+        "apps": "app",
+        "games": "game",
+        "themes": "theme"
+    }
+
+    if not is_logged():
+        return redirect(url_for(f"store._{prefixes[content_type]}", id=id))
+    rating = request.form.get("rating")
+    if not rating:
+        return redirect(url_for(f"store._{prefixes[content_type]}", id=id))
+    
+    db.rate(rating, user_id=session['id'], content_id=id, content_type=content_type)
+    return redirect(url_for(f"store._{prefixes[content_type]}", id=id))
+
+
 @store.route("/app/<int:id>")
 def _app(id):
     return _item_page(id, content_type="apps")
@@ -38,7 +103,8 @@ def _game(id):
 
 def _item_page(id, content_type):
 
-    app = db.get_content(content_type=content_type)[id]
+    app = db.get_content(id=id, content_type=content_type)
+    print(app)
     app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
     try:
         app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
@@ -59,6 +125,8 @@ def _item_page(id, content_type):
     elif content_type == "themes":
         template = "theme_page.html"
 
+    print(app['rating'])
+
     return render_template(template, app=app, recommended=recommended)
 
 @store.route("/app/<int:id>/images")
@@ -69,7 +137,7 @@ def _game_images(id):
     return _item_images(id, "games")
 
 def _item_images(id, content_type):
-    app = db.get_content(content_type=content_type)[id]
+    app = db.get_content(id=id, content_type=content_type)
 
     if not app['screenshots_count'] > 0:
         if type == "apps":
@@ -174,19 +242,25 @@ def _games():
 
 def _content(content_type):
 
-    if content_type == "apps":
-        content_type_prefix = "applications"
-    elif content_type == "games":
-        content_type_prefix = "games"
+    prefixes = {
+        "apps": "applications",
+        "games": "games",
+        "themes": "themes"
+    }
+    
+    content_type_prefix = prefixes.get(content_type)
 
     categoryId = request.args.get('categoryId')
     category_name = db.get_category_name(categoryId, content_type) if categoryId else None
     
     try:
-        all_apps = db.get_content(categoryId, content_type, session['platformId'])
+        all_apps = db.get_content(categoryId=categoryId, content_type=content_type, platformId=session['platformId'])
     except db.WrongCategoryError:
         return redirect(f"/{content_type_prefix}/")
 
+
+    if not all_apps:
+        return render_template(f"{content_type}_empty.html")
     pageId = request.args.get('pageId')
 
     if not pageId:

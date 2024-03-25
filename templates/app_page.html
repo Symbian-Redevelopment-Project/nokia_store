@@ -10,6 +10,8 @@
         <link type="text/css" rel="stylesheet" media="all" charset="utf-8" href="/static/css/global-min.css" />
         <link type="text/css" rel="stylesheet" media="all" charset="utf-8" href="/static/css/style.css" />
         <link rel="shortcut icon" href="/static/img/favicon1.ico" type="image/x-icon" />
+
+        <script src="/static/js/script.js"></script>
     </head>
 
     <body>   
@@ -43,7 +45,7 @@
 
             <div id="views">
                 <div class="view">   
-                    <div class="contentItem" id="c359613">
+                    <div class="contentItem" id="{{ app['id'] }}">
                         <table class="contentInfo hreview-aggregate">
                             <tr>
                                 <td class="feature">
@@ -73,12 +75,15 @@
                         </table>
         
                         <div class="reviewDiv">
-                            <a href="/content/{{ app['id'] }}/comments" class="reviews"> Reviews</a>
-                            <img src="/static/img/star_p.png" alt="1 star" />
-                            <img src="/static/img/star_p.png" alt="2 stars" />
-                            <img src="/static/img/star_p.png" alt="3 stars" />
-                            <img src="/static/img/star_p.png" alt="4 stars" />
-                            <img src="/static/img/star_p.png" alt="5 stars" />
+                            <a href="/app/{{ app['id'] }}/rate" class="reviews"> Rate</a>
+                            {% for i in range(app['rating']) %}
+                            <img src="/static/img/star_p.png" alt="{{ i+1 }} star" />
+                            {% endfor %}
+                            {% if app['rating'] != 5 %}
+                            {% for i in range(app['rating'], 5) %}
+                            <img src="/static/img/star_g.png" alt="{{ i+1 }} star" />
+                            {% endfor %}
+                            {% endif %}
                         </div>
                         
                         {% if app['screenshots_count'] > 0 %}
@@ -107,9 +112,9 @@
                 
                                 {% for app in recommended %}
                                 {% if loop.index % 2 == 0 %}
-                                <tr class="contentItem ">
+                                <tr class="contentItem " id="{{ app['id'] }}">
                                 {% else %}
-                                <tr class="contentItem alt ">
+                                <tr class="contentItem alt " id="{{ app['id'] }}">
                                 {% endif %}
                                     <td class="thumbnail">
                                         <img src="/static/store/{{ app['img'] }}" alt="thumbnail of {{ app['title'] }}" width="46" height="46" />
@@ -122,13 +127,15 @@
                                     </td>
         
                                     <td class="contentRatingPrice">
-                                        <div class="rating">
-                                            <img src="/static/img/star_p.png" alt="1 star" />
-                                            <img src="/static/img/star_p.png" alt="2 stars" />
-                                            <img src="/static/img/star_p.png" alt="3 stars" />
-                                            <img src="/static/img/star_p.png" alt="4 stars" />
-                                            <img src="/static/img/star_p.png" alt="5 stars" />
-                                        </div>
+                                        <div class="rating"><!-- Rating --></div>
+                                        {% for i in range(app['rating']) %}
+                                        <img src="/static/img/star_p.png" alt="{{ i+1 }} star" />
+                                        {% endfor %}
+                                        {% if app['rating'] != 5 %}
+                                        {% for i in range(app['rating'], 5) %}
+                                        <img src="/static/img/star_g.png" alt="{{ i+1 }} star" />
+                                        {% endfor %}
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

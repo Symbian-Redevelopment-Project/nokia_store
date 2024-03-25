@@ -44,7 +44,7 @@
                     <a href="/themes/">Themes</a>
                 </div> <!-- end navigation -->
                 
-                {% if category != None %}
+                {% if category is defined and category != None%}
                 <div id="crumbNav">Games&nbsp;&gt; {{ category }}&nbsp;<a href="/games/browse/">Change</a></div>
                 {% else %}
                 <div id="crumbNav">Games&nbsp;&gt; All&nbsp;<a href="/games/browse/">Change</a></div>

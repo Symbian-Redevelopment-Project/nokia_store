@@ -31,39 +31,95 @@ def format_results(results_list, content_type):
             "platformName": get_platform_name(result_list[7]),
             "screenshots_count": result_list[8],
             "img": os.path.join(content_type, result_list[9]),
-            "content_type": content_type
+            "content_type": content_type,
+            "rating": get_rating(result_list[0], content_type)
         }
     
     return results
 
-def get_content(categoryId=None, content_type=None, platformId="all"):
+def get_content(id=None, categoryId=None, content_type=None, platformId="all"):
 
     categories = get_categories(content_type)
     categories_ids = [result[0] for result in categories]
 
     cursor = conn.cursor()
+
+    if id:
+        id = int(id)
+
     if categoryId is None:
         if platformId == "all":
-            query = f"SELECT * FROM {content_type}"
-            cursor.execute(query)
+            if id:
+                query = f"SELECT * FROM {content_type} WHERE id=%s"
+                cursor.execute(query, (id,))
+            else:
+                query = f"SELECT * FROM {content_type}"
+                cursor.execute(query)
         else:
-            query = f"SELECT * FROM {content_type} WHERE platform=%s"
-            cursor.execute(query, (platformId,))
+            if id:
+                query = f"SELECT * FROM {content_type} WHERE platform=%s AND id=%s"
+                cursor.execute(query, (platformId, id))
+            else:
+                query = f"SELECT * FROM {content_type} WHERE platform=%s"
+                cursor.execute(query, (platformId,))
     else:
         if int(categoryId) not in categories_ids:
             raise WrongCategoryError
         
         if platformId == "all":
-            query = f"SELECT * FROM {content_type} WHERE category=%s ORDER BY title"
-            cursor.execute(query, (int(categoryId),))
+            if id:
+                query = f"SELECT * FROM {content_type} WHERE category=%s AND id=%s ORDER BY title"
+                cursor.execute(query, (int(categoryId), id))
+            else:
+                query = f"SELECT * FROM {content_type} WHERE category=%s ORDER BY title"
+                cursor.execute(query, (int(categoryId),))
         else:
-            query = f"SELECT * FROM {content_type} WHERE category=%s AND platform=%s ORDER BY title"
-            cursor.execute(query, (int(categoryId), platformId))
+            if id:
+                query = f"SELECT * FROM {content_type} WHERE category=%s AND platform=%s AND id=%s ORDER BY title"
+                cursor.execute(query, (int(categoryId), platformId, id))
+            else:
+                query = f"SELECT * FROM {content_type} WHERE category=%s AND platform=%s ORDER BY title"
+                cursor.execute(query, (int(categoryId), platformId))
     
     results_list = cursor.fetchall()
     cursor.close()
+    if not results_list:
+        return None
 
-    return format_results(results_list, content_type)
+    results = format_results(results_list, content_type)
+    if id:
+        return results.get(id)
+    else:
+        return results
+
+def get_rating(content_id, content_type):
+    
+    cursor = conn.cursor()
+    query = f"SELECT ROUND(AVG(rating)) as rating FROM {content_type}_rating WHERE content_id=%s"
+    cursor.execute(query, (content_id,))
+    result = cursor.fetchone()[0]
+    cursor.close()
+
+    return int(result) if result else 0
+
+def rate(rating, user_id, content_id, content_type):
+
+    cursor = conn.cursor()
+    query = f"SELECT * FROM {content_type}_rating WHERE content_id=%s AND user_id=%s"
+    cursor.execute(query, (content_id, user_id))
+    results = cursor.fetchall()
+    cursor.close()
+
+    cursor = conn.cursor()
+    if results:
+        query = f"UPDATE {content_type}_rating SET rating=%s WHERE content_id=%s AND user_id=%s"
+        cursor.execute(query, (rating, content_id, user_id))
+    else:
+        query = f"INSERT INTO {content_type}_rating (content_id, rating, user_id) VALUES (%s, %s, %s)"
+        cursor.execute(query, (content_id, rating, user_id))
+
+    conn.commit()
+    cursor.close()
 
 def get_categories(content_type):
 
@@ -239,9 +295,16 @@ class AccountSystem:
 
         return bcrypt.checkpw(user_password, hashed_password)
     
-    def get_user_id(self, email):
+    def get_user_id(self, email=None, username=None, id=None):
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM users WHERE email=%s AND active=true", (email,))
+        if email:
+            cursor.execute("SELECT id FROM users WHERE email=%s AND active=true", (email,))
+        elif id:
+            cursor.execute("SELECT id FROM users WHERE id=%s AND active=true", (id,))
+        elif username:
+            cursor.execute("SELECT id FROM users WHERE username=%s AND active=true", (username,))
+        else:
+            raise TypeError("Provide either id or email")
 
         result = cursor.fetchone()
         cursor.close()
