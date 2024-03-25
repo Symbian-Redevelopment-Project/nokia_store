@@ -127,15 +127,16 @@
                                     </td>
         
                                     <td class="contentRatingPrice">
-                                        <div class="rating"><!-- Rating --></div>
-                                        {% for i in range(app['rating']) %}
-                                        <img src="/static/img/star_p.png" alt="{{ i+1 }} star" />
-                                        {% endfor %}
-                                        {% if app['rating'] != 5 %}
-                                        {% for i in range(app['rating'], 5) %}
-                                        <img src="/static/img/star_g.png" alt="{{ i+1 }} star" />
-                                        {% endfor %}
-                                        {% endif %}
+                                        <div class="rating"><!-- Rating -->
+                                            {% for i in range(app['rating']) %}
+                                            <img src="/static/img/star_p.png" alt="{{ i+1 }} star" />
+                                            {% endfor %}
+                                            {% if app['rating'] != 5 %}
+                                            {% for i in range(app['rating'], 5) %}
+                                            <img src="/static/img/star_g.png" alt="{{ i+1 }} star" />
+                                            {% endfor %}
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}

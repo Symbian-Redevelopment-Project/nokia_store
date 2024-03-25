@@ -75,11 +75,14 @@
 
                             <td class="contentRatingPrice">
                                 <div class="rating">
-                                    <img src="/static/img/star_p.png" alt="1 star" />
-                                    <img src="/static/img/star_p.png" alt="2 stars" />
-                                    <img src="/static/img/star_p.png" alt="3 stars" />
-                                    <img src="/static/img/star_p.png" alt="4 stars" />
-                                    <img src="/static/img/star_p.png" alt="5 stars" />
+                                    {% for i in range(app['rating']) %}
+                                    <img src="/static/img/star_p.png" alt="{{ i+1 }} star" />
+                                    {% endfor %}
+                                    {% if app['rating'] != 5 %}
+                                    {% for i in range(app['rating'], 5) %}
+                                    <img src="/static/img/star_g.png" alt="{{ i+1 }} star" />
+                                    {% endfor %}
+                                    {% endif %}
                                 </div>
                             </td>
                         {% endfor %}
