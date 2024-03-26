@@ -103,8 +103,17 @@ def _game(id):
 
 def _item_page(id, content_type):
 
+    prefixes = {
+        "apps": "applications",
+        "games": "games",
+        "themes": "themes"
+    }
+
     app = db.get_content(id=id, content_type=content_type)
-    print(app)
+
+    if not app:
+        return redirect(f"/{prefixes[content_type]}")
+    
     app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
     try:
         app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
@@ -124,8 +133,6 @@ def _item_page(id, content_type):
         template = "game_page.html"
     elif content_type == "themes":
         template = "theme_page.html"
-
-    print(app['rating'])
 
     return render_template(template, app=app, recommended=recommended)
 
@@ -260,7 +267,7 @@ def _content(content_type):
 
 
     if not all_apps:
-        return render_template(f"{content_type}_empty.html")
+        return render_template(f"{content_type_prefix}_empty.html")
     pageId = request.args.get('pageId')
 
     if not pageId:
