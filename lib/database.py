@@ -24,7 +24,7 @@ def format_results(results_list, content_type):
             "file": result_list[2],
             "category_name": get_category_name(result_list[3], content_type),
             "category_id": result_list[3],
-            "description": result_list[4].replace("postgres$#", "\n").strip(),
+            "description": result_list[4].strip(),
             "publisher": result_list[5],
             "version": result_list[6],
             "platform": result_list[7],
