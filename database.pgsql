@@ -35,7 +35,9 @@ CREATE TABLE public.apps (
     platform character varying NOT NULL,
     screenshots_count integer DEFAULT 0,
     img character varying DEFAULT 'Store.png'::character varying,
-    visible boolean DEFAULT true
+    visible boolean DEFAULT true,
+    addon_message character varying,
+    addon_file character varying
 );
 
 
@@ -148,7 +150,9 @@ CREATE TABLE public.games (
     platform character varying NOT NULL,
     screenshots_count integer DEFAULT 0,
     img character varying DEFAULT 'Store.png'::character varying,
-    visible boolean DEFAULT true
+    visible boolean DEFAULT true,
+    addon_message character varying,
+    addon_file character varying
 );
 
 
@@ -399,8 +403,9 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: apps; Type: TABLE DATA; Schema: public; Owner: wunder
 --
 
-COPY public.apps (id, title, file, category, description, publisher, version, platform, screenshots_count, img, visible) FROM stdin;
-1	App	#	1	Description	Publisher	1.00(0)	s60	0	Store.png	t
+COPY public.apps (id, title, file, category, description, publisher, version, platform, screenshots_count, img, visible, addon_message, addon_file) FROM stdin;
+1	App	#	1	Description	Publisher	1.00(0)	s60	0	Store.png	t	\N	\N
+2	3D Compass	3D Compass v1.00(6).sisx	1	You will always know where you are heading,because 3D Compass shows you the magnetic north with a cool 3D effect! 3D Compass lets you also choose locations from your Nokia Maps landmarks list and a pointy arrow will guide you all the way. You can select the appearance of the compass from several theme options.	BH Production	1.00(6)	s60	0	3DCompass.png	t	Fix below:	XD
 \.
 
 
@@ -420,6 +425,7 @@ COPY public.apps_categories (id, name) FROM stdin;
 COPY public.apps_rating (id, content_id, rating, user_id) FROM stdin;
 3	1	1	3
 2	1	5	2
+4	2	1	2
 \.
 
 
@@ -427,7 +433,7 @@ COPY public.apps_rating (id, content_id, rating, user_id) FROM stdin;
 -- Data for Name: games; Type: TABLE DATA; Schema: public; Owner: wunder
 --
 
-COPY public.games (id, title, file, category, description, publisher, version, platform, screenshots_count, img, visible) FROM stdin;
+COPY public.games (id, title, file, category, description, publisher, version, platform, screenshots_count, img, visible, addon_message, addon_file) FROM stdin;
 \.
 
 
@@ -465,17 +471,6 @@ COPY public.themes_categories (id, name) FROM stdin;
 1	All
 \.
 
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: wunder
---
-
-COPY public.users (id, email, password, active, confirmed, banned, banned_reason, username) FROM stdin;
-2	dredlok706@yandex.com	$2b$12$RcUq1D6yMbHGo2jKOPNYnuCwfeJ3wdSQ5P.G9KpVTGzZYCpzUdIWC	t	t	f		WunderWungiel
-3	dredlok706@gmail.com	$2b$12$R6LJhMw2ZM9GJaj4W/.ya.WsX2fZkup32ItUVmzWuQjZ5zFbGig5m	t	t	f		WunderWungiel2
-\.
-
-
 --
 -- Name: apps_categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
 --
@@ -487,14 +482,14 @@ SELECT pg_catalog.setval('public.apps_categories_id_seq', 1, true);
 -- Name: apps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
 --
 
-SELECT pg_catalog.setval('public.apps_id_seq', 1, true);
+SELECT pg_catalog.setval('public.apps_id_seq', 2, true);
 
 
 --
 -- Name: apps_rating_id_seq; Type: SEQUENCE SET; Schema: public; Owner: wunder
 --
 
-SELECT pg_catalog.setval('public.apps_rating_id_seq', 3, true);
+SELECT pg_catalog.setval('public.apps_rating_id_seq', 4, true);
 
 
 --

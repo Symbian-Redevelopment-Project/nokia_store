@@ -32,9 +32,11 @@ def format_results(results_list, content_type):
             "screenshots_count": result_list[8],
             "img": os.path.join(content_type, result_list[9]),
             "content_type": content_type,
-            "rating": get_rating(result_list[0], content_type)
+            "rating": get_rating(result_list[0], content_type),
+            "addon_message": result_list[11],
+            "addon_file": result_list[12]
         }
-    
+
     return results
 
 def get_content(id=None, categoryId=None, content_type=None, platformId="all"):

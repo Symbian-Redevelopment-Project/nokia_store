@@ -2,7 +2,7 @@ import os
 import random
 import math
 
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
 
 from . import database as db
 from .auth import session_logout, is_logged
@@ -115,8 +115,11 @@ def _item_page(id, content_type):
         return redirect(f"/{prefixes[content_type]}")
     
     app['screenshots'] = [f'{id}_{i}.png' for i in range(app['screenshots_count'])]
+    
+    print(os.path.join(current_app.root_path, 'static', 'files', app['file']))
+
     try:
-        app['size'] = round(os.stat('static/files/' + app['file']).st_size / (1024 * 1024), 2)
+        app['size'] = round(os.stat(os.path.join(current_app.root_path, 'static', 'files', app['file'])).st_size / (1024 * 1024), 2)
     except FileNotFoundError:
         app['size'] = 0
 

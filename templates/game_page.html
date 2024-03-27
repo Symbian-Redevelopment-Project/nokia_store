@@ -93,7 +93,18 @@
                         <div class="description">
                             <p>{{ app['description']|safe }}</p>
                         </div> <!-- end description -->
-    
+
+                        {% if app['addon_message'] is not none %}
+                        <div style="color: green;">
+                            {{ app['addon_message'] }}
+                            {% if app['addon_file'] is not none %}
+                            <div class="buttons buttons_small">
+                                <a href="/static/files/{{ app['addon_file'] }}" class="lite" target="_blank">Download</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <br />
+                        {% endif %}
             
                         <div class="publisher">
                             <a href="#" onclick="return false;">See all by {{ app['publisher'] }}</a>
