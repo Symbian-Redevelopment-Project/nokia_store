@@ -11,3 +11,7 @@ span.required, span.tip {
 #searchLink, #searchLink span, #searchLink span a {
     color: #fff;
 }
+
+.buttons_small a {
+    font-size: 10px; 
+}
